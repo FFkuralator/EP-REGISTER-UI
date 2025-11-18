@@ -15,7 +15,11 @@ export default function ProgramCardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8042/dev/api/v1/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`);
+        const response = await fetch(`http://localhost:8042/dev/api/v1/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
+            headers: {
+              "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+            }
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -48,6 +52,9 @@ export default function ProgramCardPage() {
       return formattedData;
   };
 
+  if (!programIerarchy || !programIerarchy.result) {
+    return <div>Загрузка...</div>;
+  }
   const program = formatProgramData(programIerarchy.result[0], dateKeys);
 
   
@@ -75,15 +82,16 @@ export default function ProgramCardPage() {
     language_hours: program.language_hours,
   }
 
+  const historyChanges = getHistoryChanges(programIerarchy)
   const details = [
     {
       title: "Описание",
       content: <Text> { program.description } </Text>,
     },
-    {
+    historyChanges.length > 1 &&{
       title: "Иерархия программ",
       content: [
-        getHistoryChanges(programIerarchy, 2).map(( item, index ) => (
+        historyChanges.map(( item, index ) => (
           <HistoryItem key={index} meta={ item.meta } changes={ item.changes }/>
         ))
       ],

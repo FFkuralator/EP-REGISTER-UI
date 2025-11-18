@@ -11,7 +11,7 @@ export default function getHistoryChanges(hierarchy) {
             return;
         }
         
-        if (item.id && !visitedIds.has(item.id)) {
+        if (item.id && !visitedIds.has(item.id) && item.start_year) {
             allPrograms.push(item);
             visitedIds.add(item.id);
 

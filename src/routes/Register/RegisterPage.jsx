@@ -47,7 +47,11 @@ export default function RegisterPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetch('http://localhost:8042/dev/api/v1/field_of_study/active/get?lang=ru');
+        const result = await fetch('http://localhost:8042/dev/api/v1/educational_program/active/get?lang=ru', {
+            headers: {
+              "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+            }
+        });
         const rawData = await result.json();
 
         const formatted = formatProgramsData(rawData.result, dateKeys);
@@ -94,16 +98,16 @@ export default function RegisterPage() {
   });
 
   useEffect(() => {
-  if (dataCount !== undefined) {
-    setPaginationData({
-      pageSize: 20,
-      startItem: 1,
-      endItem: dataCount <= 20 ? dataCount : 20,
-      totalItems: dataCount,
-      currentPage: 1,
-      totalPages: Math.ceil(dataCount / 20),
-    });
-  }
+    if (dataCount !== undefined) {
+      setPaginationData({
+        pageSize: 20,
+        startItem: 1,
+        endItem: dataCount <= 20 ? dataCount : 20,
+        totalItems: dataCount,
+        currentPage: 1,
+        totalPages: Math.ceil(dataCount / 20),
+      });
+    }
 }, [dataCount]);
 
   const handlePageChange = (direction) => {
