@@ -46,41 +46,58 @@ export default function Table({
     setMenu((m) => ({ ...m, visible: false }));
   }, []);
 
+  const getProcessedMenuContent = () => {
+    if (!menu.row) return menuContent;
+
+    return menuContent.map((item) => {
+      if (item.href && typeof item.href === 'function') {
+        return { ...item, href: item.href(menu.row) };
+      }
+      if (item.onClick && typeof item.onClick === 'function') {
+        return { ...item, onClick: () => item.onClick(menu.row) };
+      }
+      return item;
+    });
+  };
+
   return (
-    <div className={styles.tableWrapper}>
-        <table className={styles.table}>
-            <TableHead
-            columns={columns}
-            onSort={onSort}
-            sortState={sortState}
-            onFilter={onFilter}
-            filterState={filterState}
-            />
-    
-            <tbody>
-                {data.map((row) => (
-                    <tr key={row.id}
-                        onContextMenu={(e) => handleRightClick(e, row)}
-                        className={ styles.tableRow}
-                    >
-                        {columns.map((column) => (
-                            <td 
-                                key={column.key}
-                                className={styles.baseCell}
-                            >
-                                <BaseCellRenderer value={row[column.key ?? '']} />
-                            </td>
-                        ))}
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+    <div className={styles.tableComponent}>
+        <div className={ styles.tableWrapper }>
+            <table className={styles.table}>
+                <TableHead
+                    columns={columns}
+                    onSort={onSort}
+                    sortState={sortState}
+                    onFilter={onFilter}
+                    filterState={filterState}
+                />
+        
+                <tbody>
+                    {data.map((row) => (
+                        <tr key={row.id}
+                            onContextMenu={(e) => handleRightClick(e, row)}
+                            className={styles.tableRow}
+                        >
+                            {columns.map((column) => (
+                                <td 
+                                    key={column.key}
+                                    className={styles.baseCell}
+                                >
+                                    <BaseCellRenderer value={row[column.key ?? '']} />
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+
 
         { menu.visible &&
             <Menu 
                 flag={menu}
                 changeFlag={closeMenu}
-                menu={menuContent}
+                menu={getProcessedMenuContent()}
             />
         }
         

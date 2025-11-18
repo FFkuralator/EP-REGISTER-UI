@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './HistoryItem.module.css'
-import getProgramLabel from '../../../utils/getProgramKeyLabel';
+import getProgramLabel from '../../../utils/getProgramLabel';
 
 export default function HistoryItem({ meta, changes}) {
   const adaptChangesToArray = (changes) => {

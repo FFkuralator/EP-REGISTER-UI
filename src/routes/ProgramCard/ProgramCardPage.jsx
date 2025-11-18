@@ -4,7 +4,7 @@ import getGroupNumber from '../../utils/getGroupNumber';
 import getHistoryChanges from '../../utils/getHistoryChanges';
 import Text from '../../components/UI/Text/Text';
 import HistoryItem from '../../components/UI/DetailView/HistoryItem';
-import getProgramLabel from '../../utils/getProgramKeyLabel';
+import getProgramLabel from '../../utils/getProgramLabel';
 import getFormattedDate from '../../utils/getFormattedDate';
 import { useParams } from 'react-router';
 
@@ -34,19 +34,19 @@ export default function ProgramCardPage() {
   const dateKeys = [
     "poa_accreditation_expiry", 
     "state_accreditation_expiry"
-];
+  ];
 
-const formatProgramData = (data, dateKeys) => {
-    const formattedData = { ...data };
+  const formatProgramData = (data, dateKeys) => {
+      const formattedData = { ...data };
 
-    dateKeys.forEach(key => {
-        if (formattedData[key]) {
-            formattedData[key] = getFormattedDate(formattedData[key])
-        }
-    });
+      dateKeys.forEach(key => {
+          if (formattedData[key]) {
+              formattedData[key] = getFormattedDate(formattedData[key])
+          }
+      });
 
-    return formattedData;
-};
+      return formattedData;
+  };
 
   const program = formatProgramData(programIerarchy.result[0], dateKeys);
 

@@ -8,9 +8,9 @@ export default function Filter({ options, onFilter, filterState, xy }) {
       style={{ top: xy.y, left: xy.x }}
     >
       {options.map((option) => (
-        <label key={option.value} className={styles.filterOption}>
+        <label key={option.key} className={styles.filterOption}>
           <input
-            value={String(option.value)}
+            value={String(option.key)}
             type="checkbox"
             onChange={(e) => onFilter(e.currentTarget.value)}
             checked={(filterState || []).map(String).includes(String(option.value))}

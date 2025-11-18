@@ -49,14 +49,16 @@ export default function TableHead({ columns, onSort, sortState, onFilter, filter
                   </span>
                 )}
 
-                {column.filterable && column.filterOptions && (
+                {(column.filterOptions || []).length > 0 
+                && (
                   <TriangleButton
                     open={isFilterActive}
                     onOpen={(e) => toggleFilter(e, column.key)}
                   />
                 )}
 
-                {isFilterActive && column.filterable && column.filterOptions && (
+                {isFilterActive && (column.filterOptions || []).length > 0 
+                && (
                   <TableFilter
                     column={column}
                     onFilter={onFilter}

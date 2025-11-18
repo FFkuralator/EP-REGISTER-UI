@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router';
 import styles from './Menu.module.css';
 
 export default function Menu({ title, flag, changeFlag, menu }) {
@@ -13,15 +14,33 @@ export default function Menu({ title, flag, changeFlag, menu }) {
         <div className={styles.menu} style={{ top: flag.y, left: flag.x }}>
           {title && <div>{title}</div>}
 
-          {menu.map((item) => (
-            <button
-              type="button"
-              key={item.label}
-              onClick={item.onClick}
-            >
-              {item.label}
-            </button>
-          ))}
+          {menu.map((item) => {
+            if (item.href) {
+              return (
+                <Link
+                  key={item.label}
+                  to={item.href}
+                  className={styles.menuLink}
+                  onClick={changeFlag}
+                >
+                  {item.label}
+                </Link>
+              );
+            }
+
+            return (
+              <button
+                type="button"
+                key={item.label}
+                onClick={(e) => {
+                  item.onClick?.(e);
+                  changeFlag();
+                }}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </>
