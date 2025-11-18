@@ -1,0 +1,19 @@
+.historyItem {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  margin: 0.7em 0;
+}
+
+.historyCell, .yearCell {
+  padding: .4em;
+  display: flex;
+  flex-direction: column;
+  gap: .4em;
+  justify-content: center;
+}
+
+.yearCell {
+  font-weight: 600;
+  font-size: 1.2em;
+}
