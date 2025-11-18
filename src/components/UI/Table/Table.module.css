@@ -1,0 +1,22 @@
+.tableWrapper {
+  width: fit-content;
+  margin: .4em 0
+}
+
+.table {
+  border-collapse: collapse;
+  overflow: scroll;
+}
+
+.tableRow {
+  cursor: default;
+
+}
+
+.tableRow:hover {
+  background-color: whitesmoke;
+}
+
+.baseCell {
+  padding: .4em;
+}

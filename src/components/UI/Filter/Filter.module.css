@@ -1,0 +1,19 @@
+.filterWrapper {
+  position: absolute;
+  z-index: 1000;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  padding: .4em;
+  min-width: 120px;
+}
+
+.filterOption {
+  display: flex;
+  align-items: center;
+  gap: .6em;
+  padding: .1em .3em;
+  cursor: pointer;
+}

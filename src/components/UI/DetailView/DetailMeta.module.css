@@ -1,0 +1,21 @@
+.metaWrapper {
+  display: flex;
+  column-gap: 1.5em;
+  row-gap: 0.5em;
+}
+
+.metaColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.metaItem {
+
+}
+
+.metaKey {
+  font-weight: 600;
+  color: grey;
+  margin-right: 4em;
+}

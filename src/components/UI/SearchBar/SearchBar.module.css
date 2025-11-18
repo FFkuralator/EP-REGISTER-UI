@@ -1,0 +1,10 @@
+.searchBar {
+  border-radius: 4px;
+  border: 1px solid lightgrey;
+  padding: .6em 1em;
+  color: grey;
+}
+
+.searchBar:focus {
+  color: black;
+}

@@ -1,0 +1,21 @@
+.detailViewWrapper {
+  padding: 2em;
+}
+
+.main_column {
+  display: grid;
+  grid-template-columns: 2.6fr 1fr;
+  column-gap: 12%;
+  row-gap: 1em;
+  margin: 1em 0;
+}
+
+.column_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2em;
+}
+
+.sidebar_column {
+  padding-left: 2em;
+}
