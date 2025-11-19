@@ -1,11 +1,13 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router'
 import Table from '../../components/UI/Table/Table';
 import Input from '../../components/UI/Input/Input';
 import useDebounce from '../../hooks/useDebounce';
 import getProgramLabel from '../../utils/getProgramLabel';
 import getFormattedDate from '../../utils/getFormattedDate';
 import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
+import styles from './RegisterPage.module.css'
 
 export default function RegisterPage() {
   const dateKeys = [
@@ -146,6 +148,12 @@ export default function RegisterPage() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по полям"
         />
+        <Link
+          className={styles.link}
+          to={`/program/new/add`}
+        >
+          Назад к программе
+        </Link>
       </div>
 
       <Table
@@ -162,7 +170,11 @@ export default function RegisterPage() {
           },
           {
             label: 'Редактировать',
-            href: (row) => `/program/${row.id}/edit`,
+            href: (row) => `/program/edit/${row.id}`,
+          },
+          {
+            label: 'Создать новую ОП на основе',
+            href: (row) => `/program/add/${row.id}`,
           },
         ]}
         pagination={true}

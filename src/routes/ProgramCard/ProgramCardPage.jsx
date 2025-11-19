@@ -69,6 +69,10 @@ export default function ProgramCardPage() {
       {
         label: "Редактировать",
         href: `./edit`,
+      },
+      {
+        label: "Создать на основе",
+        href: './add'
       }
   ]
 

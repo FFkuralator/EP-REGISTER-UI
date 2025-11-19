@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router';
 import Input from '../../components/UI/Input/Input';
 import getProgramLabel from '../../utils/getProgramLabel';
-import styles from './ProgramEditPage.module.css'
+import styles from './ProgramActionPage.module.css'
 
 function transformToUpdate(input) {
   return {
@@ -31,12 +31,37 @@ function transformToUpdate(input) {
   };
 }
 
+function transformToAdd(input, parent_id) {
+  return {
+    network_form: input.network_form || 'NO',
+    educational_form: input.educational_form || 'OFFLINE',
+    educational_standard_type: input.educational_standard_type || 'ФГОС ВО (3++)',
+    language: input.language || 'RUSSIAN',
+    language_hours: input.language_hours || 0,
+    standard_duration_months: input.standard_duration_months || 48,
+    poa_accreditation_company: input.poa_accreditation_company || null,
+    poa_accreditation_expiry: input.poa_accreditation_expiry || null,
+    state_accreditation_expiry: input.state_accreditation_expiry || 'YYYY-MM-DD',
+    description: input.description || '',
+    title: input.title || 'New Program',
+    parent_id: Number(parent_id) || null,
+    school_id: input.school_id || 1,
+    degree_id: input.degree_id || 1,
+    title_short: input.title_short || '',
+    field_of_study_id: input.field_of_study_id || 1,
+    partner_ids: input.partner_ids || [],
+    start_year: (input.start_year || 2024) + 1,
+    end_year: (input.end_year || 2024) + 1,
+    is_active: true
+  };
+}
+
 const ignoreKeys = [
   "is_active", 
   "id", 
 ]
 
-export default function ProgramEditPage() {  
+export default function ProgramActionPage() {  
   let params = useParams();
   const [responseMsg, setResponseMsg] = useState();
   const [formData, setFormData] = useState()
@@ -44,23 +69,26 @@ export default function ProgramEditPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(`http://localhost:8042/dev/api/v1/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
-            headers: {
-              "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
-            }
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+      if (params.programID != "new") {
+        try {
+          const response = await fetch(`http://localhost:8042/dev/api/v1/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
+              headers: {
+                "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+              }
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const result = await response.json();
+          setProgram(result.result[0])
+          setFormData(params.action == 'add' ? transformToAdd(result.result[0], params.programID) : transformToUpdate(result.result[0]));
+        } catch (err) {
+          console.error(err);
         }
-        const result = await response.json();
-        setProgram(result.result[0])
-        setFormData(transformToUpdate(result.result[0]));
-      } catch (err) {
-        console.error(err);
+      } else {
+        setFormData(transformToAdd({}, null));
       }
     };
-
     fetchData();
   }, [params.programID]);
 
@@ -77,8 +105,8 @@ export default function ProgramEditPage() {
     setResponseMsg("");
 
     try {
-      const res = await fetch(`http://localhost:8042/dev/api/v1/educational_program/update?lang=ru`, {
-        method: "PATCH",
+      const res = await fetch(`http://localhost:8042/dev/api/v1/educational_program/${params.action == 'add' ? 'add' : 'update'}?lang=ru`, {
+        method: params.action == 'add' ? 'POST' : "PATCH",
         headers: { 
           "Content-Type": "application/json",
           "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
@@ -89,21 +117,24 @@ export default function ProgramEditPage() {
       if (!res.ok) throw new Error("Ошибка запроса");
 
       const data = await res.json();
-      setResponseMsg("Обновлено успешно");
+      setResponseMsg(params.action == 'add' ? 'Успешно добавлено' : 'Успешно обновлено');
     } catch (e) {
       setResponseMsg("Ошибка: " + e.message);
     }
   };
 
   return (
-    <div className={styles.editPageWrapper}>
-      <Link
-        className={styles.backLink}
-        to={`/program/${params.programID}`}
-      >
-        Назад к программе
-      </Link>
-      <h1 className={styles.title}>{program.title}</h1>
+    <div className={styles.pageWrapper}>
+
+      {params.programID != "new" 
+        &&<Link
+          className={styles.backLink}
+          to={`/program/${params.programID}`}
+        >
+          Назад к программе
+        </Link>
+      }
+      <h1 className={styles.title}>{program?.title ?? formData.title} - {params.action == 'add' ? 'Создание на основе' : 'Редактирование'}</h1>
       <div className={styles.inputList}>
         {Object.keys(formData)
           .filter(key => !ignoreKeys.includes(key))
@@ -159,7 +190,7 @@ export default function ProgramEditPage() {
 
       </div>
       <button className={styles.button} onClick={handleSubmit}>
-        Обновить
+        {params.action == 'add' ? 'Добавить' : 'Обновить'}
       </button>
 
       {responseMsg && <div className={styles.responseMsg}>{responseMsg}</div>}
