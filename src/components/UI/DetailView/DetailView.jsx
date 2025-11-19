@@ -6,6 +6,7 @@ import styles from './DetailView.module.css'
 
 export default function DetailView(
   { header,
+    headerLinks,
     meta,
     getMetaLabel,
     details,
@@ -15,7 +16,7 @@ export default function DetailView(
 ) {
   return (
     <div className={styles.detailViewWrapper}>
-      <DetailHeader data={header} />
+      <DetailHeader data={header} links={headerLinks} />
 
       <div className={styles.main_column}>
         <div className={styles.column_wrapper}>

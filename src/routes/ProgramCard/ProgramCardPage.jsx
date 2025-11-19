@@ -62,8 +62,15 @@ export default function ProgramCardPage() {
     school_title: program.school_title,
     title: program.title,
     field_of_study_title: program.field_of_study_title,
-    degree_title: program.degree_title,
+    degree_title: program.degree_title
   }
+
+  const headerLinks = [
+      {
+        label: "Редактировать",
+        href: `./edit`,
+      }
+  ]
 
   const meta = {
     field_of_study_code: program.field_of_study_code,
@@ -117,6 +124,7 @@ export default function ProgramCardPage() {
     <>
       <DetailView 
         header={header}
+        headerLinks={headerLinks}
         meta={meta}
         getMetaLabel={getProgramLabel}
         details={details}

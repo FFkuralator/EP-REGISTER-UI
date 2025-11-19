@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import Table from '../../components/UI/Table/Table';
-import SearchBar from '../../components/UI/SearchBar/SearchBar';
+import Input from '../../components/UI/Input/Input';
 import useDebounce from '../../hooks/useDebounce';
 import getProgramLabel from '../../utils/getProgramLabel';
 import getFormattedDate from '../../utils/getFormattedDate';
@@ -141,7 +141,7 @@ export default function RegisterPage() {
   return (
     <div>
       <div>
-        <SearchBar
+        <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по полям"

@@ -1,10 +1,10 @@
 import React from 'react';
-import styles from './SearchBar.module.css';
+import styles from './Input.module.css';
 
-export default function SearchBar({ value, onChange, placeholder, disabled = false }) {
+export default function Input({ value, onChange, placeholder, disabled = false }) {
   return (
     <input
-      className={styles.searchBar}
+      className={styles.input}
       type="text"
       value={value}
       onChange={onChange}

@@ -6,7 +6,7 @@ export default function BaseCellRenderer({ value }) {
   }
 
   const strValue = String(value);
-  const isLongText = strValue.length > 20;
+  const isLongText = strValue.length > 40;
 
   return (
     <span title={isLongText ? strValue : ''}>
