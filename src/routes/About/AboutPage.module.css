@@ -1,0 +1,191 @@
+.aboutContainer {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    min-height: 80vh;
+}
+
+.aboutHeader {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.aboutTitle {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.aboutSubtitle {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.aboutContent {
+    display: grid;
+    gap: 3rem;
+}
+
+.aboutSection {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aboutSection:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.missionSection .sectionTitle {
+    color: #3498db;
+}
+
+.historySection .sectionTitle {
+    color: #e74c3c;
+}
+
+.valuesSection .sectionTitle {
+    color: #2ecc71;
+}
+
+.sectionIcon {
+    font-size: 1.5rem;
+}
+
+.sectionDescription {
+    color: #555;
+    line-height: 1.7;
+    font-size: 1.1rem;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.statItem {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.statItem:hover {
+    background: #e9ecef;
+}
+
+.statNumber {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.statItem:nth-child(1) .statNumber {
+    color: #3498db;
+}
+
+.statItem:nth-child(2) .statNumber {
+    color: #e74c3c;
+}
+
+.statItem:nth-child(3) .statNumber {
+    color: #2ecc71;
+}
+
+.statLabel {
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.valuesList {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.valueItem {
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.valueItem:last-child {
+    border-bottom: none;
+}
+
+.valueTitle {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.valueDescription {
+    color: #7f8c8d;
+    line-height: 1.6;
+}
+
+.contactSection {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+}
+
+.contactTitle {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.contactDescription {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.contactButtons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.contactBtn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    border: none;
+}
+
+.contactBtn:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.contactBtn.primary {
+    background: white;
+    color: #667eea;
+}
+
+.contactBtn.secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
