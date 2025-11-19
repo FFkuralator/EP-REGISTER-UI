@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import styles from './Header.module.css';
 
 export default function Header() {
@@ -13,8 +13,7 @@ export default function Header() {
 
     const navItems = [
         { path: '/', label: 'Главная' },
-        { path: '/programs', label: 'Программы' },
-        { path: '/register', label: 'Регистрация' },
+        { path: '/register', label: 'Программы' },
         { path: '/about', label: 'О нас' }
     ];
 
@@ -34,6 +33,7 @@ export default function Header() {
 
     return (
         <header className={styles.header}>
+          <div className={styles.left}>
             <Link to="/" className={styles.logo}>
                 <img
                     src="/vite.svg"
@@ -42,7 +42,10 @@ export default function Header() {
                 />
                 <span>Triceratops</span>
             </Link>
-
+          </div>
+                    
+                    
+          <div className={styles.center}>
             <nav className={styles.nav}>
                 {navItems.map((item) => (
                     <Link
@@ -56,7 +59,9 @@ export default function Header() {
                     </Link>
                 ))}
             </nav>
-
+          </div>          
+          
+          <div className={styles.right}>
             <div className={styles.profile}>
                 <div className={styles.dropdown}>
                     <div
@@ -101,6 +106,7 @@ export default function Header() {
                     onClick={closeDropdown}
                 />
             )}
+          </div>
         </header>
     );
 }

@@ -1,13 +1,26 @@
 .header {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 1rem 2rem;
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
+}
+
+.left, .center, .right {
+    display: flex;
+}
+
+.center {
+    justify-content: center;
+}
+
+.right {
+    justify-content: right;
 }
 
 .logo {
