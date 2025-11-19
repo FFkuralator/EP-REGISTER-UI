@@ -170,11 +170,11 @@ export default function RegisterPage() {
           },
           {
             label: 'Редактировать',
-            href: (row) => `/program/edit/${row.id}`,
+            href: (row) => `/program/${row.id}/edit`,
           },
           {
             label: 'Создать новую ОП на основе',
-            href: (row) => `/program/add/${row.id}`,
+            href: (row) => `/program/${row.id}add`,
           },
         ]}
         pagination={true}
