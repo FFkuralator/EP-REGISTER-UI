@@ -152,7 +152,7 @@ export default function RegisterPage() {
           className={styles.link}
           to={`/program/new/add`}
         >
-          Назад к программе
+          Создать новую программу
         </Link>
       </div>
 
@@ -174,7 +174,7 @@ export default function RegisterPage() {
           },
           {
             label: 'Создать новую ОП на основе',
-            href: (row) => `/program/${row.id}add`,
+            href: (row) => `/program/${row.id}/add`,
           },
         ]}
         pagination={true}

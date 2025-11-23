@@ -40,7 +40,7 @@ export default function Header() {
                     alt="EduProg Logo"
                     className={styles.logoImage}
                 />
-                <span>Triceratops</span>
+                <span>Портфель ОП</span>
             </Link>
           </div>
                     

@@ -25,8 +25,8 @@ export default function HistoryItem({ meta, changes}) {
       {adaptChangesToArray(changes).map((change, index) => (
         <div key={index} className={styles.historyCell}>
           <div><b>{ getProgramLabel(keys[index])}</b></div>
-          <div>{meta.start_year - 1}: {change.master ?? '-'}</div>
-          <div>{meta.start_year} : {change.current ?? '-'}</div>
+          <div>{meta.start_year - 1}: {getProgramLabel(change.master ?? '-', 'value')}</div>
+          <div>{meta.start_year} : {getProgramLabel(change.current ?? '-', 'value')}</div>
         </div>
       ))}
     </div>

@@ -28,7 +28,7 @@ const values = {
   BOTH: 'Очно-заочная',
   ENGLISH: 'Английский',
   RUSSIAN: 'Русский',
-  PARTIALLY_LANGUAGE: 'Частично на английском',
+  PARTIALLY_ENGLISH: 'Частично на английском',
   NO: 'Нет',
   FEFU_BASIC: 'ДВФУ - базовая',
   FEFU_PARTICIPANT: 'ДВФУ - участник',
