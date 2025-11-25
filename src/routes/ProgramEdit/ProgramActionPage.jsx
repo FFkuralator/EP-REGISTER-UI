@@ -1,200 +1,358 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router';
 import Input from '../../components/UI/Input/Input';
+import Select from '../../components/UI/Select/Select';
 import getProgramLabel from '../../utils/getProgramLabel';
 import styles from './ProgramActionPage.module.css'
 
-function transformToUpdate(input) {
-  return {
-    network_form: input.network_form,
-    educational_form: input.educational_form,
-    educational_standard_type: input.educational_standard_type,
-    language: input.language,
-    language_hours: input.language_hours,
-    standard_duration_months: input.standard_duration_months,
-    poa_accreditation_company: input.poa_accreditation_company,
-    poa_accreditation_expiry: input.poa_accreditation_expiry,
-    state_accreditation_expiry: input.state_accreditation_expiry,
-    description: input.description,
-    title_short: input.title_short,
-    id: input.id,
-    title: input.title,
-    is_active: input.is_active,
+const API_BASE = 'http://localhost:8042/dev/api/v1';
+const AUTH_HEADER = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y";
+
+const DEFAULT_VALUES = {
+  network_form: 'NO',
+  educational_form: 'OFFLINE',
+  educational_standard_type: 'ФГОС ВО (3++)',
+  language: 'RUSSIAN',
+  language_hours: 0,
+  standard_duration_months: 48,
+  poa_accreditation_company: null,
+  poa_accreditation_expiry: null,
+  state_accreditation_expiry: 'YYYY-MM-DD',
+  school_id: 1,
+  degree_id: 1,
+  field_of_study_id: 1,
+  partner_ids: [],
+};
+
+const INHERITED_FIELDS = [
+  'network_form',
+  'educational_form',
+  'educational_standard_type',
+  'language',
+  'language_hours',
+  'standard_duration_months',
+  'poa_accreditation_company',
+  'poa_accreditation_expiry',
+  'state_accreditation_expiry',
+  'school_id',
+  'degree_id',
+  'field_of_study_id',
+  'partner_ids',
+];
+
+const IGNORE_KEYS = ['is_active', 'id'];
+
+const fetchOptions = async (endpoint) => {
+  try {
+    const response = await fetch(`${API_BASE}/${endpoint}?lang=ru`, {
+      headers: { "auth": AUTH_HEADER }
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const result = await response.json();
+    return result.result || [];
+  } catch (err) {
+    console.error(`Error fetching ${endpoint}:`, err);
+    return [];
+  }
+};
+
+const extractPartnerIds = (partnerTitles, allPartners) => {
+  if (!Array.isArray(partnerTitles)) return [];
+  return partnerTitles
+    .map(title => allPartners.find(p => p.title === title)?.id)
+    .filter(id => id !== undefined);
+};
+
+const extractSchoolId = (schoolTitle, schoolCode, allSchools) => {
+  return allSchools.find(s => s.title === schoolTitle || s.code === schoolCode)?.id || 1;
+};
+
+const extractDegreeId = (degreeTitle, allDegrees) => {
+  return allDegrees.find(d => d.title === degreeTitle)?.id || 1;
+};
+
+const extractFieldOfStudyId = (fieldOfStudyTitle, fieldOfStudyCode, allFieldOfStudies) => {
+  return allFieldOfStudies.find(f => f.title === fieldOfStudyTitle || f.code === fieldOfStudyCode)?.id || 1;
+};
+
+const buildFormData = (program, isAdd, allSchools, allDegrees, allFieldOfStudies, allPartners) => {
+  const baseData = { ...DEFAULT_VALUES };
+  
+  if (program) {
+    const sourceData = isAdd && program.parent ? program.parent : program;
     
-    field_of_study_id: 1,
-    partner_ids: [],
-    start_year: input.start_year,
-    end_year: input.end_year,
-    parent_id: input.parent_id ?? null,
-    school_id: 1,
-    degree_id: 1
-  };
-}
+    INHERITED_FIELDS.forEach(field => {
+      if (field === 'school_id') {
+        baseData.school_id = extractSchoolId(sourceData.school_title, sourceData.school_code, allSchools);
+      } else if (field === 'degree_id') {
+        baseData.degree_id = extractDegreeId(sourceData.degree_title, allDegrees);
+      } else if (field === 'field_of_study_id') {
+        baseData.field_of_study_id = extractFieldOfStudyId(sourceData.field_of_study_title, sourceData.field_of_study_code, allFieldOfStudies);
+      } else if (field === 'partner_ids') {
+        baseData.partner_ids = extractPartnerIds(sourceData.partner_titles, allPartners);
+      } else if (sourceData[field] !== undefined) {
+        baseData[field] = sourceData[field];
+      }
+    });
+  }
 
-function transformToAdd(input, parent_id) {
-  return {
-    network_form: input.network_form || 'NO',
-    educational_form: input.educational_form || 'OFFLINE',
-    educational_standard_type: input.educational_standard_type || 'ФГОС ВО (3++)',
-    language: input.language || 'RUSSIAN',
-    language_hours: input.language_hours || 0,
-    standard_duration_months: input.standard_duration_months || 48,
-    poa_accreditation_company: input.poa_accreditation_company || null,
-    poa_accreditation_expiry: input.poa_accreditation_expiry || null,
-    state_accreditation_expiry: input.state_accreditation_expiry || 'YYYY-MM-DD',
-    description: input.description || '',
-    title: input.title || 'New Program',
-    parent_id: Number(parent_id) || null,
-    school_id: input.school_id || 1,
-    degree_id: input.degree_id || 1,
-    title_short: input.title_short || '',
-    field_of_study_id: input.field_of_study_id || 1,
-    partner_ids: input.partner_ids || [],
-    start_year: (input.start_year || 2024) + 1,
-    end_year: (input.end_year || 2024) + 1,
-    is_active: true
-  };
-}
+  if (program && !isAdd) {
+    baseData.title = program.title;
+    baseData.title_short = program.title_short;
+    baseData.description = program.description;
+    baseData.id = program.id;
+    baseData.is_active = program.is_active;
+    baseData.parent_id = program.parent_id ?? null;
+    baseData.start_year = program.start_year;
+    baseData.end_year = program.end_year;
+  } else {
+    if (program?.parent) {
+      baseData.title = program.title || 'New Program';
+      baseData.title_short = program.title_short || '';
+      baseData.description = program.description || '';
+    } else {
+      baseData.title = 'New Program';
+      baseData.title_short = '';
+      baseData.description = '';
+    }
+    baseData.id = program?.id;
+    baseData.is_active = true;
+    baseData.parent_id = program?.id ?? null;
+    baseData.start_year = (program?.start_year || 2024) + 1;
+    baseData.end_year = (program?.end_year || 2024) + 1;
+  }
 
-const ignoreKeys = [
-  "is_active", 
-  "id", 
-]
+  return baseData;
+};
 
-export default function ProgramActionPage() {  
-  let params = useParams();
+export default function ProgramActionPage() {
+  const params = useParams();
+  
   const [responseMsg, setResponseMsg] = useState();
-  const [formData, setFormData] = useState()
-  const [program, setProgram] = useState()
+  const [formData, setFormData] = useState();
+  const [program, setProgram] = useState();
+  
+  const [schools, setSchools] = useState([]);
+  const [fieldOfStudies, setFieldOfStudies] = useState([]);
+  const [degrees, setDegrees] = useState([]);
+  const [partners, setPartners] = useState([]);
+  
+  const isAddMode = params.action === 'add';
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (params.programID != "new") {
+    const fetchAllData = async () => {
+      const [schoolsData, fieldOfStudiesData, degreesData, partnersData] = await Promise.all([
+        fetchOptions('school/get'),
+        fetchOptions('field_of_study/get'),
+        fetchOptions('degree/get'),
+        fetchOptions('educational_program_partner/get')
+      ]);
+      
+      setSchools(schoolsData);
+      setFieldOfStudies(fieldOfStudiesData);
+      setDegrees(degreesData);
+      setPartners(partnersData);
+
+      if (params.programID !== "new") {
         try {
-          const response = await fetch(`http://localhost:8042/dev/api/v1/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
-              headers: {
-                "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
-              }
-          });
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
+          const response = await fetch(
+            `${API_BASE}/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`,
+            { headers: { "auth": AUTH_HEADER } }
+          );
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          
           const result = await response.json();
-          setProgram(result.result[0])
-          setFormData(params.action == 'add' ? transformToAdd(result.result[0], params.programID) : transformToUpdate(result.result[0]));
+          const programData = result.result[0];
+          setProgram(programData);
+          setFormData(buildFormData(programData, isAddMode, schoolsData, degreesData, fieldOfStudiesData, partnersData));
         } catch (err) {
-          console.error(err);
+          console.error('Error fetching program:', err);
         }
       } else {
-        setFormData(transformToAdd({}, null));
+        setFormData(buildFormData(null, false, schoolsData, degreesData, fieldOfStudiesData, partnersData));
       }
     };
-    fetchData();
-  }, [params.programID]);
+
+    fetchAllData();
+  }, [params.programID, params.action]);
 
   if (!formData) {
     return <div>Загрузка...</div>;
   }
-  
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
-    console.log(JSON.stringify(formData))
     setResponseMsg("");
 
     try {
-      const res = await fetch(`http://localhost:8042/dev/api/v1/educational_program/${params.action == 'add' ? 'add' : 'update'}?lang=ru`, {
-        method: params.action == 'add' ? 'POST' : "PATCH",
-        headers: { 
+      const endpoint = isAddMode ? 'add' : 'update';
+      const method = isAddMode ? 'POST' : 'PATCH';
+      
+      const res = await fetch(`${API_BASE}/educational_program/${endpoint}?lang=ru`, {
+        method,
+        headers: {
           "Content-Type": "application/json",
-          "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+          "auth": AUTH_HEADER
         },
         body: JSON.stringify(formData),
       });
 
       if (!res.ok) throw new Error("Ошибка запроса");
 
-      const data = await res.json();
-      setResponseMsg(params.action == 'add' ? 'Успешно добавлено' : 'Успешно обновлено');
+      setResponseMsg(isAddMode ? 'Успешно добавлено' : 'Успешно обновлено');
     } catch (e) {
       setResponseMsg("Ошибка: " + e.message);
     }
   };
 
+  const fieldConfig = {
+    language: {
+      component: Select,
+      props: {
+        options: [
+          { id: "RUSSIAN", title: "RUSSIAN" },
+          { id: "ENGLISH", title: "ENGLISH" },
+          { id: "PARTIALLY_ENGLISH", title: "PARTIALLY_ENGLISH" },
+        ],
+        placeholder: "Выберите язык реализации",
+        multiple: false,
+      },
+    },
+    educational_form:{
+      component: Select,
+      props: {
+        options: [
+          { id: "OFFLINE", title: "OFFLINE" },
+          { id: "ONLINE", title: "ONLINE" },
+          { id: "BOTH", title: "BOTH" },
+        ],
+        placeholder: "Выберите форму обучения",
+        multiple: false,
+      },
+    },
+    network_form: {
+      component: Select,
+      props: {
+        options: [
+          { id: "NO", title: "NO" },
+          { id: "FEFU_BASIC", title: "FEFU_BASIC" },
+          { id: "FEFU_PARTICIPANT", title: "FEFU_PARTICIPANT" },
+          { id: "UNKNOWN", title: "UNKNOWN" },
+        ],
+        placeholder: "Выберите форму сетевой реализации",
+        multiple: false,
+      },
+    },
+    educational_standard_type: {
+      component: Select,
+      props: {
+        options: [
+          { id: "ФГОС ВО (3++)", title: "ФГОС ВО (3++)" },
+          { id: "ОС ВО ДВФУ", title: "ОС ВО ДВФУ" },
+        ],
+        placeholder: "Выберите образовательный стандарт",
+        multiple: false,
+      },
+    },
+    partner_ids: {
+      component: Select,
+      props: {
+        options: partners,
+        placeholder: "Выберите партнеров",
+        multiple: true,
+      },
+    },
+    school_id: {
+      component: Select,
+      props: {
+        options: schools,
+        placeholder: "Выберите школу",
+      },
+    },
+    field_of_study_id: {
+      component: Select,
+      props: {
+        options: fieldOfStudies,
+        placeholder: "Выберите направление обучения",
+      },
+    },
+    degree_id: {
+      component: Select,
+      props: {
+        options: degrees,
+        placeholder: "Выберите уровень образования",
+      },
+    },
+  };
+
+  const renderField = (key) => {
+    const cfg = fieldConfig[key];
+
+    if (cfg) {
+      const { component: Component, props } = cfg;
+      return (
+        <Component
+          value={formData[key]}
+          onChange={(val) => handleChange(key, val)}
+          {...props}
+        />
+      );
+    }
+
+    return (
+      <Input
+        value={formData[key] ?? ""}
+        onChange={(e) => {
+          let v = e.target.value;
+
+          if (typeof formData[key] === "string" && !Number.isInteger(formData[key])) {
+            handleChange(key, v === "" ? null : v);
+            return;
+          }
+
+          v = v.trim();
+          if (v === "null") v = null;
+          else if (v === "true") v = true;
+          else if (v === "false") v = false;
+          else if (v === "") v = null;
+          else if (!isNaN(v)) v = Number(v);
+
+          handleChange(key, v);
+        }}
+      />
+    );
+  };
+
   return (
     <div className={styles.pageWrapper}>
-
-      {params.programID != "new" 
-        &&<Link
-          className={styles.backLink}
-          to={`/program/${params.programID}`}
-        >
+      {params.programID !== "new" && (
+        <Link className={styles.backLink} to={`/program/${params.programID}`}>
           Назад к программе
         </Link>
-      }
-      <h1 className={styles.title}>{program?.title ?? formData.title} - {params.action == 'add' ? 'Создание на основе' : 'Редактирование'}</h1>
+      )}
+
+      <h1 className={styles.title}>
+        {program?.title ?? formData.title} - {isAddMode ? 'Создание на основе' : 'Редактирование'}
+      </h1>
+
       <div className={styles.inputList}>
         {Object.keys(formData)
-          .filter(key => !ignoreKeys.includes(key))
+          .filter(key => !IGNORE_KEYS.includes(key))
           .map((key) => (
             <div key={key} className={styles.inputField}>
               <label className={styles.label}>{getProgramLabel(key, "key")}</label>
-              {Array.isArray(formData[key]) ? (
-                  <Input
-                    value={formData[key].join(",")}
-                    onChange={(e) => {
-                      const raw = e.target.value.trim();
-
-                      if (raw === "[]") {
-                        handleChange(key, []);
-                        return;
-                      }
-
-                      if (raw === "") {
-                        handleChange(key, []);
-                        return;
-                      }
-
-                      const arr = raw.split(",").map((v) => {
-                        v = v.trim();
-                        if (v === "null") return null;
-                        if (v === "true") return true;
-                        if (v === "false") return false;
-                        return isNaN(v) ? v : Number(v);
-                      });
-
-                      handleChange(key, arr);
-                    }}
-                  />
-
-              ) : (
-                <Input
-                  value={formData[key] ?? ""}
-                  onChange={(e) => {
-                    let v = e.target.value.trim();
-
-                    if (v === "null") v = null;
-                    else if (v === "true") v = true;
-                    else if (v === "false") v = false;
-                    else if (v === "") v = null;
-                    else if (!isNaN(v)) v = Number(v);
-
-                    handleChange(key, v);
-                  }}
-                />
-              )}
+              {renderField(key)}
             </div>
-        ))}
-
+          ))}
       </div>
+
       <button className={styles.button} onClick={handleSubmit}>
-        {params.action == 'add' ? 'Добавить' : 'Обновить'}
+        {isAddMode ? 'Добавить' : 'Обновить'}
       </button>
 
       {responseMsg && <div className={styles.responseMsg}>{responseMsg}</div>}
-
     </div>
   );
 }
