@@ -11,27 +11,27 @@ import styles from './RegisterPage.module.css'
 
 export default function RegisterPage() {
   const dateKeys = [
-  "poa_accreditation_expiry",
-  "state_accreditation_expiry"
-];
+    "poa_accreditation_expiry",
+    "state_accreditation_expiry"
+  ];
 
   const monthsToYears = (months) => {
     if (!months) return null;
-    return +( (months / 12).toFixed(1) );
+    return +((months / 12).toFixed(1));
   };
 
   const formatProgramsData = (array, dateKeys) => {
     return (array || []).map(item => {
       const formattedItem = { ...item };
-    
+
       if (formattedItem.standard_duration_months !== undefined) {
-          formattedItem.standard_duration_months = monthsToYears(
-            formattedItem.standard_duration_months
-          );
-        }
+        formattedItem.standard_duration_months = monthsToYears(
+          formattedItem.standard_duration_months
+        );
+      }
 
       Object.entries(formattedItem).forEach(([key, value]) => {
-          formattedItem[key] = getProgramLabel(value, 'value');
+        formattedItem[key] = getProgramLabel(value, 'value');
       });
 
       dateKeys.forEach(key => {
@@ -50,9 +50,9 @@ export default function RegisterPage() {
     const fetchData = async () => {
       try {
         const result = await fetch('http://localhost:8042/dev/api/v1/educational_program/active/get?lang=ru', {
-            headers: {
-              "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
-            }
+          headers: {
+            "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+          }
         });
         const rawData = await result.json();
 
@@ -110,7 +110,7 @@ export default function RegisterPage() {
         totalPages: Math.ceil(dataCount / 20),
       });
     }
-}, [dataCount]);
+  }, [dataCount]);
 
   const handlePageChange = (direction) => {
     setPaginationData((prev) => {
@@ -140,6 +140,78 @@ export default function RegisterPage() {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 800);
 
+  const columnsWithFilters = React.useMemo(() => {
+    return PROGRAM_COLUMNS_CONFIG.map(column => {
+      if (column.key === 'field_of_study_title') {
+        const uniqueValues = [...new Set(rowData.map(row => row[column.key]))].filter(Boolean);
+        return {
+          ...column,
+          filterOptions: uniqueValues.map(value => ({
+            key: value,
+            value: value,
+            label: value
+          }))
+        };
+      }
+      if (column.key === 'school_title') {
+        const uniqueValues = [...new Set(rowData.map(row => row[column.key]))].filter(Boolean);
+        return {
+          ...column,
+          filterOptions: uniqueValues.map(value => ({
+            key: value,
+            value: value,
+            label: value
+          }))
+        };
+      }
+      return column;
+    });
+  }, [rowData]);
+
+  const processedData = React.useMemo(() => {
+    let result = [...rowData];
+
+    if (debouncedSearch.trim()) {
+      const searchLower = debouncedSearch.toLowerCase();
+      result = result.filter((row) =>
+        Object.values(row).some((value) =>
+          String(value).toLowerCase().includes(searchLower)
+        )
+      );
+    }
+
+    if (Object.keys(filter).length > 0) {
+      result = result.filter((row) => {
+        return Object.entries(filter).every(([columnKey, values]) => {
+          if (!values || values.length === 0) return true;
+          return values.includes(String(row[columnKey]));
+        });
+      });
+    }
+
+    if (sort.by) {
+      result.sort((a, b) => {
+        const aVal = a[sort.by];
+        const bVal = b[sort.by];
+
+        if (aVal == null && bVal == null) return 0;
+        if (aVal == null) return sort.order === 'asc' ? 1 : -1;
+        if (bVal == null) return sort.order === 'asc' ? -1 : 1;
+
+        const aNum = parseFloat(aVal);
+        const bNum = parseFloat(bVal);
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+          return sort.order === 'asc' ? aNum - bNum : bNum - aNum;
+        }
+
+        const aStr = String(aVal).localeCompare(String(bVal));
+        return sort.order === 'asc' ? aStr : -aStr;
+      });
+    }
+
+    return result;
+  }, [rowData, debouncedSearch, filter, sort]);
+
   return (
     <div>
       <div>
@@ -157,8 +229,8 @@ export default function RegisterPage() {
       </div>
 
       <Table
-        columns={PROGRAM_COLUMNS_CONFIG}
-        data={rowData}
+        columns={columnsWithFilters}
+        data={processedData}
         onSort={handleSort}
         sortState={sort}
         onFilter={handleFilter}
