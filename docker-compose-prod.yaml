@@ -1,0 +1,14 @@
+name: ep-register
+services:
+  ep-register-ui:
+    image: ep-register-ui
+    container_name: ep-register-ui
+    restart: always
+    build: .
+    networks:
+      - ep-register-net
+
+networks:
+  ep-register-net:
+    external: true
+    name: ep-register_ep-register-net

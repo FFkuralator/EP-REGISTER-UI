@@ -9,16 +9,17 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-### Stage 2: Serve with nginx
-FROM nginx:stable-alpine AS runner
+### Stage 2: Serve built files with a lightweight Node static server
+FROM node:20-alpine AS runner
 
-WORKDIR /etc/nginx
+WORKDIR /app
 
-COPY nginx/mime.types mime.types
-COPY nginx/prod.conf nginx.conf
+# install a tiny static server globally
+RUN npm install -g serve@14
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+# copy built files from builder
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", "-s", "dist", "-l", "80"]
