@@ -9,7 +9,8 @@ RUN npm ci --no-audit --no-fund
 
 # copy source and build
 COPY . .
-RUN npm run build
+ARG VITE_MODE=dev
+RUN npm run build -- --mode $VITE_MODE
 
 ### Stage 2: runtime - install only production deps and serve built files
 FROM node:20-alpine AS runner

@@ -20,7 +20,7 @@ start-dev:
 	docker compose -f docker-compose-dev.yaml up --build -d
 
 update-ui-dev:
-	npm run build
+	npm run build:dev
 	docker compose -f docker-compose-dev.yaml cp dist/. ep-register-ui:/usr/share/nginx/html
 
 # prod
