@@ -4,7 +4,10 @@ services:
     image: ep-register-ui
     container_name: ep-register-ui
     restart: always
-    build: .
+    build:
+      context: .
+      args:
+        VITE_MODE: prod
     networks:
       - ep-register-net
 

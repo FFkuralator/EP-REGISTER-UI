@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router';
 import Input from '../../components/UI/Input/Input';
 import getProgramLabel from '../../utils/getProgramLabel';
+import { API_BASE_URL } from '../../config/api';
 import styles from './ProgramActionPage.module.css'
 
 function transformToUpdate(input) {
@@ -71,7 +72,7 @@ export default function ProgramActionPage() {
     const fetchData = async () => {
       if (params.programID != "new") {
         try {
-          const response = await fetch(`http://localhost:8042/dev/api/v1/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
+          const response = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
               headers: {
                 "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
               }
@@ -105,7 +106,7 @@ export default function ProgramActionPage() {
     setResponseMsg("");
 
     try {
-      const res = await fetch(`http://localhost:8042/dev/api/v1/educational_program/${params.action == 'add' ? 'add' : 'update'}?lang=ru`, {
+      const res = await fetch(`${API_BASE_URL}/educational_program/${params.action == 'add' ? 'add' : 'update'}?lang=ru`, {
         method: params.action == 'add' ? 'POST' : "PATCH",
         headers: { 
           "Content-Type": "application/json",

@@ -5,7 +5,10 @@ services:
     image: ep-register-ui
     container_name: ep-register-ui
     restart: always
-    build: .
+    build:
+      context: .
+      args:
+        VITE_MODE: dev
     ports:
       - "8080:80"
     networks:
