@@ -3,10 +3,8 @@ import { Link, useParams } from 'react-router';
 import Input from '../../components/UI/Input/Input';
 import Select from '../../components/UI/Select/Select';
 import getProgramLabel from '../../utils/getProgramLabel';
+import { API_BASE_URL } from '../../config/api';
 import styles from './ProgramActionPage.module.css'
-
-const API_BASE = 'http://localhost:8042/dev/api/v1';
-const AUTH_HEADER = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y";
 
 const DEFAULT_VALUES = {
   network_form: 'NO',
@@ -45,7 +43,7 @@ const IGNORE_KEYS = ['is_active', 'id'];
 const fetchOptions = async (endpoint) => {
   try {
     const response = await fetch(`${API_BASE}/${endpoint}?lang=ru`, {
-      headers: { "auth": AUTH_HEADER }
+      headers: { }
     });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
@@ -155,12 +153,13 @@ export default function ProgramActionPage() {
 
       if (params.programID !== "new") {
         try {
-          const response = await fetch(
-            `${API_BASE}/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`,
-            { headers: { "auth": AUTH_HEADER } }
-          );
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          
+          const response = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
+              headers: {
+              }
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
           const result = await response.json();
           const programData = result.result[0];
           setProgram(programData);
@@ -187,14 +186,10 @@ export default function ProgramActionPage() {
     setResponseMsg("");
 
     try {
-      const endpoint = isAddMode ? 'add' : 'update';
-      const method = isAddMode ? 'POST' : 'PATCH';
-      
-      const res = await fetch(`${API_BASE}/educational_program/${endpoint}?lang=ru`, {
-        method,
-        headers: {
+      const res = await fetch(`${API_BASE_URL}/educational_program/${params.action == 'add' ? 'add' : 'update'}?lang=ru`, {
+        method: params.action == 'add' ? 'POST' : "PATCH",
+        headers: { 
           "Content-Type": "application/json",
-          "auth": AUTH_HEADER
         },
         body: JSON.stringify(formData),
       });
