@@ -1,4 +1,5 @@
 name: ep-register
+
 services:
   ep-register-ui:
     image: ep-register-ui

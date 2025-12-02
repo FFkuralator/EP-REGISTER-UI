@@ -26,7 +26,6 @@ export default function ProgramCardPage() {
         }
         const result = await response.json();
         setProgramIerarchy(result);
-        console.log(result)
       } catch (err) {
         console.error(err);
       }
