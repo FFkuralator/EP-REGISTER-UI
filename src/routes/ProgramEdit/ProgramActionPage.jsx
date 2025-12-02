@@ -102,7 +102,6 @@ export default function ProgramActionPage() {
   };
 
   const handleSubmit = async () => {
-    console.log(JSON.stringify(formData))
     setResponseMsg("");
 
     try {
