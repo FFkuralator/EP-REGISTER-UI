@@ -10,7 +10,7 @@ import { API_BASE_URL } from '../../config/api';
 import { useParams } from 'react-router';
 
 export default function ProgramCardPage() {  
-  let params = useParams();
+  const params = useParams();
 
   const [programIerarchy, setProgramIerarchy] = useState();
   useEffect(() => {
