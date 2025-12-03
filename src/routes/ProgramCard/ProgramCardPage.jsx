@@ -6,16 +6,17 @@ import Text from '../../components/UI/Text/Text';
 import HistoryItem from '../../components/UI/DetailView/HistoryItem';
 import getProgramLabel from '../../utils/getProgramLabel';
 import getFormattedDate from '../../utils/getFormattedDate';
+import { API_BASE_URL } from '../../config/api';
 import { useParams } from 'react-router';
 
 export default function ProgramCardPage() {  
-  let params = useParams();
+  const params = useParams();
 
   const [programIerarchy, setProgramIerarchy] = useState();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8042/dev/api/v1/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
+        const response = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
             headers: {
               "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
             }
@@ -25,7 +26,6 @@ export default function ProgramCardPage() {
         }
         const result = await response.json();
         setProgramIerarchy(result);
-        console.log(result)
       } catch (err) {
         console.error(err);
       }

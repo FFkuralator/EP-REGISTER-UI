@@ -8,9 +8,7 @@ services:
     build:
       context: .
       args:
-        VITE_MODE: dev
-    ports:
-      - "8080:80"
+        VITE_MODE: prod
     networks:
       - ep-register-net
 

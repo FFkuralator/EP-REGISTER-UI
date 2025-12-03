@@ -7,6 +7,7 @@ import useDebounce from '../../hooks/useDebounce';
 import getProgramLabel from '../../utils/getProgramLabel';
 import getFormattedDate from '../../utils/getFormattedDate';
 import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
+import { API_BASE_URL } from '../../config/api';
 import styles from './RegisterPage.module.css'
 
 export default function RegisterPage() {
@@ -49,10 +50,10 @@ export default function RegisterPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetch('http://localhost:8042/dev/api/v1/educational_program/active/get?lang=ru', {
-          headers: {
-            "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
-          }
+        const result = await fetch(`${API_BASE_URL}/educational_program/active/get?lang=ru`, {
+            headers: {
+              "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+            }
         });
         const rawData = await result.json();
 
