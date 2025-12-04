@@ -1,5 +1,17 @@
 .link {
-  margin-left: 2em;
+  border: none;
+  text-align: left;
+  cursor: pointer;
   text-decoration: none;
+  width: fit-content;
   color: inherit;
+  background-color: lightblue;
+  margin-left: .6em;
+  border-radius: 4px;
+  padding: .6em 1em;
+
+}
+
+.link:hover {
+  background: aquamarine;
 }

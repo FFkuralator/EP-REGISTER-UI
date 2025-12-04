@@ -7,13 +7,11 @@ export default function HomePage() {
             {/* Заголовок и описание */}
             <div className={styles.homeHero}>
                 <h1 className={styles.homeTitle}>
-                    Добро пожаловать в Triceratops!
+                    Lorem ipsum dolor sit amet
                 </h1>
 
                 <p className={styles.homeDescription}>
-                    Инновационная платформа для получения качественного образования.
-                    Мы помогаем студентам и профессионалам развивать навыки,
-                    необходимые для успешной карьеры в цифровую эпоху.
+                    Integer vitae diam pretium, tincidunt elit auctor, blandit risus. Vivamus hendrerit purus eu congue auctor. Vestibulum iaculis dictum libero tincidunt congue. Donec id viverra nisi. Cras in fermentum lorem, eu efficitur risus. Morbi lacinia, nisl quis aliquam maximus, lacus quam pellentesque magna, at pharetra libero odio vel nunc.   
                 </p>
             </div>
 
@@ -22,43 +20,39 @@ export default function HomePage() {
                 {/* Карточка 1 */}
                 <div className={styles.featureCard}>
                     <div className={styles.featureIcon}>📚</div>
-                    <h3 className={styles.featureTitle}>Разнообразные курсы</h3>
+                    <h3 className={styles.featureTitle}>Lorem ipsum dolor</h3>
                     <p className={styles.featureDescription}>
-                        Широкий выбор образовательных программ по различным
-                        направлениям и уровням сложности.
+                        Praesent posuere sem vel nisi sollicitudin pellentesque. Proin non molestie eros.
                     </p>
                 </div>
 
                 {/* Карточка 2 */}
                 <div className={styles.featureCard}>
                     <div className={styles.featureIcon}>⚡</div>
-                    <h3 className={styles.featureTitle}>Современные технологии</h3>
+                    <h3 className={styles.featureTitle}>Lorem ipsum</h3>
                     <p className={styles.featureDescription}>
-                        Обучение с использованием передовых технологий
-                        и интерактивных методик.
+                        Praesent posuere sem vel nisi sollicitudin pellentesque. Proin non molestie eros.
                     </p>
                 </div>
 
                 {/* Карточка 3 */}
                 <div className={styles.featureCard}>
                     <div className={styles.featureIcon}>🎯</div>
-                    <h3 className={styles.featureTitle}>Практическая направленность</h3>
+                    <h3 className={styles.featureTitle}>Lorem ipsum</h3>
                     <p className={styles.featureDescription}>
-                        Фокус на реальных проектах и задачах, которые
-                        помогут в профессиональном развитии.
+                        ФPraesent posuere sem vel nisi sollicitudin pellentesque. Proin non molestie eros.
                     </p>
                 </div>
             </div>
 
             {/* Призыв к действию */}
             <div className={styles.ctaSection}>
-                <h2 className={styles.ctaTitle}>Готовы начать обучение?</h2>
+                <h2 className={styles.ctaTitle}>Lorem ipsum</h2>
                 <p className={styles.ctaDescription}>
-                    Присоединяйтесь к тысячам студентов, которые уже
-                    начали свой путь к успеху с Triceratops!
+                    Praesent posuere sem vel nisi sollicitudin pellentesque. Proin non molestie eros.
                 </p>
                 <button className={styles.ctaButton}>
-                    Начать сейчас
+                    Lorem ipsum
                 </button>
             </div>
         </div>
