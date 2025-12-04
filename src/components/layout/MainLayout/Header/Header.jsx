@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router';
+import { useAuth } from '../../../../hooks/useAuth';
+import LoginModal from '../../../UI/LoginModal/LoginModal';
 import styles from './Header.module.css';
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const location = useLocation();
-
-    const user = {
-        name: 'Вася',
-        avatar: 'В'
-    };
+    const { user, isAuthenticated, logout } = useAuth();
 
     const navItems = [
         { path: '/', label: 'Главная' },
@@ -20,7 +19,10 @@ export default function Header() {
     const dropdownItems = [
         { label: 'Мой профиль', action: () => console.log('Переход в профиль') },
         { label: 'Настройки', action: () => console.log('Переход в настройки') },
-        { label: 'Выйти', action: () => console.log('Выход из системы') }
+        { label: 'Выйти', action: () => {
+            logout();
+            setIsDropdownOpen(false);
+        } }
     ];
 
     const toggleDropdown = () => {
@@ -29,6 +31,14 @@ export default function Header() {
 
     const closeDropdown = () => {
         setIsDropdownOpen(false);
+    };
+
+    const handleLoginClick = () => {
+        setIsLoginModalOpen(true);
+    };
+
+    const handleCloseLoginModal = () => {
+        setIsLoginModalOpen(false);
     };
 
     return (
@@ -62,17 +72,18 @@ export default function Header() {
           </div>          
           
           <div className={styles.right}>
-            <div className={styles.profile}>
+            {isAuthenticated ? (
+              <div className={styles.profile}>
                 <div className={styles.dropdown}>
                     <div
                         className={styles.profileInfo}
                         onClick={toggleDropdown}
                     >
                         <div className={styles.avatar}>
-                            {user.avatar}
+                            {user.email ? user.email[0].toUpperCase() : 'U'}
                         </div>
                         <span className={styles.userName}>
-                            {user.name}
+                            {user.email || 'Пользователь'}
                         </span>
                     </div>
 
@@ -91,7 +102,15 @@ export default function Header() {
                         ))}
                     </div>
                 </div>
-            </div>
+              </div>
+            ) : (
+              <button 
+                className={styles.loginButton}
+                onClick={handleLoginClick}
+              >
+                Вход
+              </button>
+            )}
 
             {isDropdownOpen && (
                 <div
@@ -107,6 +126,11 @@ export default function Header() {
                 />
             )}
           </div>
+
+          <LoginModal 
+            isOpen={isLoginModalOpen}
+            onClose={handleCloseLoginModal}
+          />
         </header>
     );
 }
