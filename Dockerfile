@@ -16,8 +16,13 @@ RUN npm run build -- --mode $VITE_MODE
 ### Stage 2: runtime - serve static files with lightweight nginx
 FROM nginx:1.27-alpine AS runner
 
-# copy built files from builder
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+
+# конфиг для сервера нгинх
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=builder /app/dist .
+
 
 EXPOSE 80
 
