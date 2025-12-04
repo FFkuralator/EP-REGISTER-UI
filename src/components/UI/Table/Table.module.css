@@ -23,4 +23,9 @@
 
 .baseCell {
   padding: .4em;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
 }

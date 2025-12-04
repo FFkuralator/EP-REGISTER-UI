@@ -6,11 +6,9 @@ export default function About() {
         <div className={styles.aboutContainer}>
             {/* Заголовок страницы */}
             <div className={styles.aboutHeader}>
-                <h1 className={styles.aboutTitle}>О компании Triceratops</h1>
+                <h1 className={styles.aboutTitle}>Lorem Ipsum</h1>
                 <p className={styles.aboutSubtitle}>
-                    Мы - инновационная образовательная платформа,
-                    созданная для преобразования подхода к обучению
-                    в цифровую эпоху.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce tincidunt auctor finibus.
                 </p>
             </div>
 
@@ -18,13 +16,9 @@ export default function About() {
             <div className={styles.aboutContent}>
                 <section className={`${styles.aboutSection} ${styles.missionSection}`}>
                     <h2 className={styles.sectionTitle}>
-                        <span className={styles.sectionIcon}>Наша миссия </span></h2>
+                        <span className={styles.sectionIcon}>Lorem ipsum</span></h2>
                     <p className={styles.sectionDescription}>
-                        Сделать качественное образование доступным для каждого,
-                        независимо от географического положения, возраста или
-                        предыдущего опыта. Мы стремимся создать среду, где
-                        каждый может раскрыть свой потенциал и приобрести
-                        навыки, необходимые для успеха в современном мире.
+                        Integer imperdiet urna nisi. Mauris congue libero quis tincidunt vestibulum. Praesent posuere sem vel nisi sollicitudin pellentesque. Proin non molestie eros. Mauris iaculis efficitur eros vel condimentum.
                     </p>
                 </section>
             </div>
