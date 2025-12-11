@@ -9,6 +9,7 @@ import getFormattedDate from '../../utils/getFormattedDate';
 import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
 import { API_BASE_URL } from '../../config/api';
 import styles from './RegisterPage.module.css'
+import SidebarFilter from '../../components/UI/Table/SidebarFilter';
 
 export default function RegisterPage() {
   const dateKeys = [
@@ -228,6 +229,12 @@ export default function RegisterPage() {
           Создать новую программу
         </Link>
       </div>
+
+      <SidebarFilter
+        onFilter={handleFilter}
+        filterState={filter}
+        columns={columnsWithFilters}
+      />
 
       <Table
         columns={columnsWithFilters}
