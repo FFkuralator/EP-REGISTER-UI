@@ -18,6 +18,16 @@ export default function HistoryItem({ meta, changes}) {
   };
 
   const keys = adaptKeysToArray(changes);
+  if (typeof changes === 'string') {
+    return (
+      <div className={styles.historyItem}>
+        <div className={styles.yearCell}>{ meta.start_year}</div>
+        <div className={styles.historyCell}>
+          <div className={styles.noChanges}>{changes}</div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.historyItem}>

@@ -17,3 +17,8 @@
   font-weight: 600;
   font-size: 1.2em;
 }
+
+.noChanges {
+  color: #666;
+  font-style: italic;
+}

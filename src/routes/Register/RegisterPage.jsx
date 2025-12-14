@@ -48,6 +48,9 @@ export default function RegisterPage() {
 
   const [rowData, setRowData] = useState([]);
   const [dataCount, setDataCount] = useState();
+  const [families, setFamilies] = useState([]);
+  const [expandedFamilies, setExpandedFamilies] = useState(new Set());
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -60,8 +63,52 @@ export default function RegisterPage() {
 
         const formatted = formatProgramsData(rawData.result, dateKeys);
 
-        setRowData(formatted);
-        setDataCount(rawData.count);
+        const seenRoots = new Set();
+        const familiesList = [];
+
+        for (const prog of rawData.result) {
+          try {
+            const resp = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${prog.id}&lang=ru`, {
+              headers: {
+                "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+              }
+            });
+            if (!resp.ok) continue;
+            const hRes = await resp.json();
+            if (!hRes || !Array.isArray(hRes.result) || hRes.result.length === 0) continue;
+            const root = hRes.result[0];
+            const rootId = root.id;
+            if (seenRoots.has(rootId)) continue;
+
+            const members = [];
+            (function collect(node) {
+              if (!node) return;
+              members.push(node);
+              if (Array.isArray(node.children)) node.children.forEach(collect);
+            })(root);
+
+            let latest = members[0];
+            for (const m of members) {
+              const mYear = m.start_year ?? -Infinity;
+              const lYear = latest.start_year ?? -Infinity;
+              if (mYear > lYear) latest = m;
+              else if (mYear === lYear && m.id > latest.id) latest = m;
+            }
+
+            const formattedMembers = formatProgramsData(members, dateKeys);
+            const formattedLatest = formatProgramsData([latest], dateKeys)[0];
+            formattedLatest._has_multiple = (formattedMembers.length > 1);
+
+            familiesList.push({ familyId: rootId, latest: formattedLatest, members: formattedMembers });
+            seenRoots.add(rootId);
+          } catch (error) {
+            console.error('Ошибка загрузки иерархии:', error);
+          }
+        }
+
+        setFamilies(familiesList);
+        setRowData(familiesList.map(f => f.latest));
+        setDataCount(familiesList.length);
       } catch (error) {
         console.error('Ошибка загрузки данных:', error);
       }
@@ -170,7 +217,14 @@ export default function RegisterPage() {
     });
   }, [rowData]);
 
-  const processedData = React.useMemo(() => {
+  const displayColumns = React.useMemo(() => {
+    return [
+      { key: '__hierarchy', title: '' },
+      ...columnsWithFilters
+    ];
+  }, [columnsWithFilters]);
+
+    const processedData = React.useMemo(() => {
     let result = [...rowData];
 
     if (debouncedSearch.trim()) {
@@ -214,6 +268,28 @@ export default function RegisterPage() {
     return result;
   }, [rowData, debouncedSearch, filter, sort]);
 
+  const tableData = React.useMemo(() => {
+    const out = [];
+    for (const f of families) {
+      out.push({ ...f.latest, family_id: f.familyId, _is_latest: true });
+      if (expandedFamilies.has(f.familyId)) {
+        const others = f.members.filter(m => m.id !== f.latest.id).map(m => ({ ...m, family_id: f.familyId, _is_child: true }));
+        out.push(...others);
+      }
+    }
+    const processedIds = new Set(processedData.map(r => r.id));
+    return out.filter(r => processedIds.has(r.id) || r._is_child);
+  }, [families, expandedFamilies, processedData]);
+
+  const toggleFamily = (familyId) => {
+    setExpandedFamilies(prev => {
+      const copy = new Set(prev);
+      if (copy.has(familyId)) copy.delete(familyId);
+      else copy.add(familyId);
+      return copy;
+    });
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -239,8 +315,10 @@ export default function RegisterPage() {
 
         <div className={styles.contentArea}>
           <Table
-            columns={columnsWithFilters}
-            data={processedData}
+            columns={displayColumns}
+            data={tableData}
+            onToggleHierarchy={toggleFamily}
+            expandedFamilies={expandedFamilies}
             onSort={handleSort}
             sortState={sort}
             onFilter={handleFilter}

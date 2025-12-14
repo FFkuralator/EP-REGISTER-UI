@@ -11,14 +11,14 @@ export default function getHistoryChanges(hierarchy) {
             return;
         }
         
-        if (item.id && !visitedIds.has(item.id) && item.start_year) {
+        if (item.id && !visitedIds.has(item.id)) {
             allPrograms.push(item);
             visitedIds.add(item.id);
 
             if (Array.isArray(item.children)) {
                 item.children.forEach(collectPrograms);
             }
-            
+
             if (item.parent && item.parent.id && !visitedIds.has(item.parent.id)) {
                 collectPrograms(item.parent); 
             }
@@ -27,31 +27,32 @@ export default function getHistoryChanges(hierarchy) {
 
     collectPrograms(hierarchy);
 
-    allPrograms.sort((a, b) => a.id - b.id);
+    allPrograms.sort((a, b) => {
+        const ay = a.start_year ?? -Infinity;
+        const by = b.start_year ?? -Infinity;
+        if (ay !== by) return ay - by;
+        return a.id - b.id;
+    });
 
-    if (allPrograms.length === 0) {
+    if (allPrograms.length <= 1) {
         return [];
     }
 
-    const masterProgram = allPrograms[0];
-    const masterId = masterProgram.id;
-
     for (let i = 1; i < allPrograms.length; i++) {
+        const prevProgram = allPrograms[i - 1];
         const currentProgram = allPrograms[i];
-        
-        const changes = compareObjects(masterProgram, currentProgram);
+
+        const changes = compareObjects(prevProgram, currentProgram);
 
         const comparisonResult = {
             meta: {
                 id: currentProgram.id,
                 start_year: currentProgram.start_year,
-                relationship: currentProgram.parent_id === masterId ? 'child' : 
-                              currentProgram.id === masterProgram.parent_id ? 'parent' : 
-                              'other_program'
+                relationship: currentProgram.parent_id === prevProgram.id ? 'child' : currentProgram.id === prevProgram.parent_id ? 'parent' : 'other_program'
             },
             changes: changes || "No differences found (excluding hierarchy fields like parent/children)"
         };
-        
+
         differences.push(comparisonResult);
     }
 

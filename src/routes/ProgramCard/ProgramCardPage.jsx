@@ -55,7 +55,33 @@ export default function ProgramCardPage() {
   if (!programIerarchy || !programIerarchy.result) {
     return <div>Загрузка...</div>;
   }
-  const program = formatProgramData(programIerarchy.result[0], dateKeys);
+
+  const targetId = Number(params.programID);
+  const findById = (node, id) => {
+    if (!node) return null;
+    if (Array.isArray(node.result)) {
+      for (const r of node.result) {
+        const found = findById(r, id);
+        if (found) return found;
+      }
+      return null;
+    }
+    if (node.id === id) return node;
+    if (Array.isArray(node.children)) {
+      for (const child of node.children) {
+        const found = findById(child, id);
+        if (found) return found;
+      }
+    }
+    if (node.parent) {
+      const found = findById(node.parent, id);
+      if (found) return found;
+    }
+    return null;
+  };
+
+  const matched = findById(programIerarchy, targetId);
+  const program = formatProgramData(matched || programIerarchy.result[0], dateKeys);
 
   
   const header = {
@@ -99,7 +125,7 @@ export default function ProgramCardPage() {
       title: "Описание",
       content: <Text> { program.description } </Text>,
     },
-    historyChanges.length > 1 &&{
+    historyChanges.length > 0 &&{
       title: "Иерархия программ",
       content: [
         historyChanges.map(( item, index ) => (
