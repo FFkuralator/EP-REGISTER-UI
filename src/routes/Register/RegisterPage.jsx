@@ -215,53 +215,57 @@ export default function RegisterPage() {
   }, [rowData, debouncedSearch, filter, sort]);
 
   return (
-    <div>
-      <div>
+    <div className={styles.container}>
+      <div className={styles.header}>
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по полям"
         />
         <Link
-          className={styles.link}
+          className={styles.createButton}
           to={`/program/new/add`}
         >
-          Создать новую программу
+          Создать ОП
         </Link>
       </div>
 
-      <SidebarFilter
-        onFilter={handleFilter}
-        filterState={filter}
-        columns={columnsWithFilters}
-      />
+      <div className={styles.mainContent}>
+        <SidebarFilter
+          onFilter={handleFilter}
+          filterState={filter}
+          columns={columnsWithFilters}
+        />
 
-      <Table
-        columns={columnsWithFilters}
-        data={processedData}
-        onSort={handleSort}
-        sortState={sort}
-        onFilter={handleFilter}
-        filterState={filter}
-        menuContent={[
-          {
-            label: 'Открыть',
-            href: (row) => `/program/${row.id}`,
-          },
-          {
-            label: 'Редактировать',
-            href: (row) => `/program/${row.id}/edit`,
-          },
-          {
-            label: 'Создать новую ОП на основе',
-            href: (row) => `/program/${row.id}/add`,
-          },
-        ]}
-        pagination={true}
-        paginationData={paginationData}
-        handlePageChange={handlePageChange}
-        handlePageSizeChange={handlePageSizeChange}
-      />
+        <div className={styles.contentArea}>
+          <Table
+            columns={columnsWithFilters}
+            data={processedData}
+            onSort={handleSort}
+            sortState={sort}
+            onFilter={handleFilter}
+            filterState={filter}
+            menuContent={[
+              {
+                label: 'Открыть',
+                href: (row) => `/program/${row.id}`,
+              },
+              {
+                label: 'Редактировать',
+                href: (row) => `/program/${row.id}/edit`,
+              },
+              {
+                label: 'Создать новую ОП на основе',
+                href: (row) => `/program/${row.id}/add`,
+              },
+            ]}
+            pagination={true}
+            paginationData={paginationData}
+            handlePageChange={handlePageChange}
+            handlePageSizeChange={handlePageSizeChange}
+          />
+        </div>
+      </div>
     </div>
   );
 }
