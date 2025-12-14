@@ -1,0 +1,27 @@
+.tableHead::after {
+  content: "";
+  display: table-row;
+  height: 6px;
+}
+
+.tableHeadRow {
+  border-bottom: 1px solid black;
+}
+
+.headCell {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1em;
+  font-size: 1em;
+  font-weight: 700;
+  text-align: left;
+  padding: .4em;
+}
+
+.activeHeadCell {
+  background-color: lightblue;
+}
+
+.sortableHeadCell:hover {
+  transform: scale(1.05);
+}

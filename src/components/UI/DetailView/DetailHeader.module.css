@@ -1,0 +1,33 @@
+.sources {
+  padding: .2em;
+  margin-bottom: .3em;
+  color: black;
+}
+
+.sources a {
+  color: grey;
+  text-decoration: none;
+}
+
+.sources a:hover {
+  color: black;
+}
+
+.link {
+  width: 100%;
+  padding: .4em .6em;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  width: fit-content;
+  color: inherit;
+  background-color: lightblue;
+  margin-top: .3em;
+}
+
+.link:hover {
+  background: aquamarine;
+}
