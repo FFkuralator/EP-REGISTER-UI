@@ -41,7 +41,6 @@ export default function ProgramActionPage() {
       return false;
     }
 
-    // разумные границы года
     if (year < 1900 || year > 2100) {
       return false;
     }
@@ -105,6 +104,19 @@ export default function ProgramActionPage() {
 
   const handleSubmit = async () => {
     setResponseMsg("");
+
+    // Проверяем обязательные поля — если они не заполнены, форма не отправляется
+    const requiredFields = ['title', 'title_short', 'standard_duration_months'];
+    const missingRequired = requiredFields.filter((k) => {
+      const v = formData[k];
+      return v === null || v === undefined || v === '';
+    });
+
+    if (missingRequired.length > 0) {
+      setValidationMsg('Пожалуйста, заполните обязательные поля: ' + missingRequired.join(', '));
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
