@@ -5,3 +5,7 @@
     transition: .2s ease;
     font-family: "Inter", sans-serif;
 }
+
+body {
+    font-size: 14px;
+}

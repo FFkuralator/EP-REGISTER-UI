@@ -46,8 +46,8 @@ export default function Header() {
           <div className={styles.left}>
             <Link to="/" className={styles.logo}>
                 <img
-                    src="/vite.svg"
-                    alt="EduProg Logo"
+                    src="/logo.svg"
+                    alt="ep register logo"
                     className={styles.logoImage}
                 />
                 <span>Портфель ОП</span>
