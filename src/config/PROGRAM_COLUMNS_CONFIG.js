@@ -7,6 +7,11 @@ const PROGRAM_COLUMNS_CONFIG = [
     sortable: true,
   },
   {
+    key: 'start_year',
+    title: getProgramLabel('start_year'),
+    sortable: true,
+  },
+  {
     key: 'field_of_study_code',
     title: getProgramLabel('field_of_study_code'),
     sortable: true,
