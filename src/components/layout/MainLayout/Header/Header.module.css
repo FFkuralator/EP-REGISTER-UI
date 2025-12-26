@@ -30,7 +30,7 @@
     gap: 0.75rem;
     text-decoration: none;
     color: #222222; /* near black */
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1.2em;
 }
 
@@ -48,9 +48,9 @@
 .navLink {
     text-decoration: none;
     color: #222222;
-    font-weight: 600;
+    font-weight: 700;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     transition: color 0.15s ease, background-color 0.15s ease;
 }
 
@@ -75,13 +75,13 @@
     gap: 0.5rem;
     cursor: pointer;
     padding: 0.25rem 0.5rem;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .avatar {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: 8px;
     background-color: #FF5400;
     color: white;
     display: flex;
