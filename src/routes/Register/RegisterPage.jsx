@@ -10,7 +10,6 @@ import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
 import { API_BASE_URL } from '../../config/api';
 import styles from './RegisterPage.module.css'
 import ModalPopup from '../../components/UI/Table/ModalPopup';
-import filterIcon from '../../../public/filterIcon.png';
 import searchIcon from '../../../public/search.png';
 
 export default function RegisterPage() {

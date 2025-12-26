@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react' // добавили useEffect
-import { Filter, X, ChevronDown, Check } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { X, ChevronDown, Check } from 'lucide-react'
 import filterIcon from '../../../../public/filterIcon.png';
 import styles from './ModalPopup.module.css'
 
@@ -29,7 +29,7 @@ export default function ModalPopup({ onFilter, filterState, columns }) {
         document.removeEventListener('keydown', handleKeyDown)
       }
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   if (filterableColumns.length === 0) {
     return null
