@@ -9,7 +9,7 @@
 }
 
 .registerPage {
-  max-width: 300px;
+  width: 19rem;
   height: 34px;
   border-radius: 8px;
   gap: 10px;
@@ -17,6 +17,7 @@
   border: none;
   padding: 0.5rem 1rem;
   flex: 1;
+  color: #FFFFFF;
 }
 
 .registerPage::placeholder {
@@ -26,4 +27,21 @@
   color: #fff;
   width: 160;
   height: 20;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.withIcon {
+  padding-left: 40px !important;
 }

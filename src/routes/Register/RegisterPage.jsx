@@ -11,6 +11,7 @@ import { API_BASE_URL } from '../../config/api';
 import styles from './RegisterPage.module.css'
 import ModalPopup from '../../components/UI/Table/ModalPopup';
 import filterIcon from '../../../public/filterIcon.png';
+import searchIcon from '../../../public/search.png';
 
 export default function RegisterPage() {
   const dateKeys = [
@@ -304,6 +305,7 @@ export default function RegisterPage() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по полям"
           variant="registerPage"
+          icon={<img src={searchIcon} alt="Search" width={16} height={16} />}
         />
         <Link
           className={styles.createButton}

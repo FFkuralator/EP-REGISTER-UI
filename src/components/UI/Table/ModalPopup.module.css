@@ -4,6 +4,7 @@
 }
 
 .filterButton {
+  max-height: 34px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -25,7 +26,6 @@
   transform: translateY(0);
 }
 
-/* Модальное окно */
 .modalOverlay {
   position: fixed;
   top: 0;
@@ -47,7 +47,7 @@
 
 .modal {
   background: white;
-  border-radius: 12px;
+  border-radius: 8px;
   width: 90%;
   max-width: 80%;
   max-height: 80vh;
@@ -71,7 +71,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 1.25rem;
   border-bottom: 1px solid #e5e7eb;
   background: #EDEDED;
 }

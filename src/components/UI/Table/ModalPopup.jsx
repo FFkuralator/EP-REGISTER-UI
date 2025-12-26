@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react' // добавили useEffect
 import { Filter, X, ChevronDown, Check } from 'lucide-react'
 import filterIcon from '../../../../public/filterIcon.png';
 import styles from './ModalPopup.module.css'
@@ -7,16 +7,32 @@ export default function ModalPopup({ onFilter, filterState, columns }) {
   const [isOpen, setIsOpen] = useState(false)
   const filterableColumns = columns.filter((column) => (column.filterOptions || []).length > 0)
 
-  if (filterableColumns.length === 0) {
-    return null
-  }
-
   const handleClose = () => {
     setIsOpen(false)
   }
 
   const handleOpen = () => {
     setIsOpen(true)
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && isOpen) {
+        handleClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown)
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+      }
+    }
+  }, [isOpen])
+
+  if (filterableColumns.length === 0) {
+    return null
   }
 
   return (
