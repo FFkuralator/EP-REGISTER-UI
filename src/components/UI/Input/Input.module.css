@@ -3,6 +3,8 @@
   border: 1px solid lightgrey;
   padding: .6em 1em;
   color: grey;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .default{
