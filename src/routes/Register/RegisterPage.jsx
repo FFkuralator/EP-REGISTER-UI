@@ -9,7 +9,8 @@ import getFormattedDate from '../../utils/getFormattedDate';
 import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
 import { API_BASE_URL } from '../../config/api';
 import styles from './RegisterPage.module.css'
-import SidebarFilter from '../../components/UI/Table/SidebarFilter';
+import ModalPopup from '../../components/UI/Table/ModalPopup';
+import filterIcon from '../../../public/filterIcon.png';
 
 export default function RegisterPage() {
   const dateKeys = [
@@ -293,10 +294,16 @@ export default function RegisterPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        <ModalPopup
+          onFilter={handleFilter}
+          filterState={filter}
+          columns={columnsWithFilters}
+        />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по полям"
+          variant="registerPage"
         />
         <Link
           className={styles.createButton}
@@ -306,44 +313,36 @@ export default function RegisterPage() {
         </Link>
       </div>
 
-      <div className={styles.mainContent}>
-        <SidebarFilter
-          onFilter={handleFilter}
-          filterState={filter}
-          columns={columnsWithFilters}
-        />
-
-        <div className={styles.contentArea}>
-          <Table
-            columns={displayColumns}
-            data={tableData}
-            onToggleHierarchy={toggleFamily}
-            expandedFamilies={expandedFamilies}
-            onSort={handleSort}
-            sortState={sort}
-            onFilter={handleFilter}
-            filterState={filter}
-            menuContent={[
-              {
-                label: 'Открыть',
-                href: (row) => `/program/${row.id}`,
-              },
-              {
-                label: 'Редактировать',
-                href: (row) => `/program/${row.id}/edit`,
-              },
-              {
-                label: 'Создать новую ОП на основе',
-                href: (row) => `/program/${row.id}/add`,
-              },
-            ]}
-            pagination={true}
-            paginationData={paginationData}
-            handlePageChange={handlePageChange}
-            handlePageSizeChange={handlePageSizeChange}
-          />
-        </div>
-      </div>
+    <div className={styles.contentArea}>
+      <Table
+        columns={displayColumns}
+        data={tableData}
+        onToggleHierarchy={toggleFamily}
+        expandedFamilies={expandedFamilies}
+        onSort={handleSort}
+        sortState={sort}
+        onFilter={handleFilter}
+        filterState={filter}
+        menuContent={[
+          {
+            label: 'Открыть',
+            href: (row) => `/program/${row.id}`,
+          },
+          {
+            label: 'Редактировать',
+            href: (row) => `/program/${row.id}/edit`,
+          },
+          {
+            label: 'Создать новую ОП на основе',
+            href: (row) => `/program/${row.id}/add`,
+          },
+        ]}
+        pagination={true}
+        paginationData={paginationData}
+        handlePageChange={handlePageChange}
+        handlePageSizeChange={handlePageSizeChange}
+      />
     </div>
+  </div>
   );
 }

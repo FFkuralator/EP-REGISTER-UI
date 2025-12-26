@@ -5,6 +5,25 @@
   color: grey;
 }
 
-.input:focus {
-  color: black;
+.default{
+}
+
+.registerPage {
+  max-width: 300px;
+  height: 34px;
+  border-radius: 8px;
+  gap: 10px;
+  background-color: #111;
+  border: none;
+  padding: 0.5rem 1rem;
+  flex: 1;
+}
+
+.registerPage::placeholder {
+  display: inline-flex;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  width: 160;
+  height: 20;
 }

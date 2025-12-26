@@ -5,7 +5,7 @@
 
 .header {
   display: flex;
-  gap: 1rem;
+  gap: 10px;
   align-items: center;
   padding: 1rem;
   background-color: white;
@@ -13,8 +13,7 @@
 }
 
 .header input {
-  flex: 1;
-  max-width: 400px;
+  max-width: 300px;
 }
 
 .createButton {
@@ -33,18 +32,11 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
-.createButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
-}
-
 .createButton:active {
   transform: translateY(0);
 }
 
 .mainContent {
-  display: flex;
-  flex: 1;
   gap: 1.5rem;
   padding: 1.5rem;
   overflow: hidden;
@@ -60,4 +52,4 @@
   .mainContent {
     flex-direction: column;
   }
-} 
+}
