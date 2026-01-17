@@ -5,7 +5,7 @@
 }
 
 .tableHeadRow {
-  border-bottom: 1px solid black;
+  border-bottom: none;
 }
 
 .headCell {
