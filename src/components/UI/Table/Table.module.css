@@ -1,19 +1,42 @@
 .tableComponent {
-  max-width: 100vw;
-  margin: .4em 0;
+  position: relative;
+  min-width: 99.1429rem;
+  min-height: 58.4286rem; 
+  max-width: calc(100vw - 52px);
+  margin: .6em auto;
+  box-sizing: border-box;
   font-size: 1rem;
+  background: #fff;
+  border: 2px solid #e6e9ee;
+  border-radius: 8px;
+  overflow: visible;
+}
+
+.tableComponent::after {
+  content: "";
+  position: absolute;
+  inset: -1.625rem -1.625rem -3.625rem -1.625rem;
+  border-radius: 12px;
+  pointer-events: none;
+  box-shadow: 0 1.875rem 3.75rem rgba(0,0,0,0.18);
 }
 
 .tableWrapper {
   overflow-x: auto;
+  max-width: 100%;
+  height: calc(100% - 0px);
+  padding: 0;
 }
 
 .table {
   border-collapse: collapse;
+  width: 100%;
+  border-spacing: 0;
 }
 
 .tableRow {
   cursor: default;
+  border-bottom: 1px solid #f0f1f4;
 }
 
 .tableRow:hover {
@@ -21,7 +44,7 @@
 }
 
 .baseCell {
-  padding: .4em;
+  padding: .6em 1em;
   max-width: 300px;
   white-space: nowrap;
   overflow: hidden;
