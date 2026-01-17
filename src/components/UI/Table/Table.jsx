@@ -83,6 +83,7 @@ export default function Table({
                       {columns.map((column) => (
                         <td 
                           key={column.key}
+                          data-label={column.title || column.key}
                           className={column.key === '__hierarchy' ? styles.hierarchyCell : styles.baseCell}
                         >
                                     {column.key === '__hierarchy' ? (

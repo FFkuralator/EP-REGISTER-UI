@@ -1,37 +1,33 @@
 .tableComponent {
   position: relative;
-  min-width: 99.1429rem;
-  min-height: 58.4286rem; 
-  max-width: calc(100vw - 52px);
-  margin: .6em auto;
+  width: 100%;
+  min-height: 50rem;
+  max-height: 100%;
+  max-width: 100%;
+  margin: 0 auto;
   box-sizing: border-box;
   font-size: 1rem;
   background: #fff;
   border: 2px solid #e6e9ee;
   border-radius: 8px;
-  overflow: visible;
-}
-
-.tableComponent::after {
-  content: "";
-  position: absolute;
-  inset: -1.625rem -1.625rem -3.625rem -1.625rem;
-  border-radius: 12px;
-  pointer-events: none;
-  box-shadow: 0 1.875rem 3.75rem rgba(0,0,0,0.18);
+  overflow: hidden;
 }
 
 .tableWrapper {
   overflow-x: auto;
+  overflow-y: auto;
   max-width: 100%;
-  height: calc(100% - 0px);
+  max-height: calc(100vh - 200px);
   padding: 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
   border-collapse: collapse;
   width: 100%;
+  min-width: 800px;
   border-spacing: 0;
+  table-layout: auto;
 }
 
 .tableRow {
@@ -40,16 +36,17 @@
 }
 
 .tableRow:hover {
-  background-color: whitesmoke;
+  background-color: #fafbfc;
 }
 
 .baseCell {
-  padding: .6em 1em;
-  max-width: 300px;
+  padding: 0.75em 1em;
+  max-width: 250px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   user-select: none;
+  vertical-align: middle;
 }
 
 .childRow {
@@ -74,4 +71,187 @@
   padding: 2px 6px;
   cursor: pointer;
   font-size: 14px;
+}
+
+/*  TABLET (769px - 1024px) */
+@media (max-width: 1024px) {
+  .tableComponent {
+    min-width: auto;
+    min-height: auto;
+    max-width: calc(100vw - 2rem);
+    margin: 0.5rem auto;
+    border-radius: 8px;
+  }
+
+  .tableComponent::before,
+  .tableComponent::after {
+    inset: -1rem -1rem -2rem -1rem;
+  }
+
+  .baseCell {
+    padding: 0.5em 0.75em;
+    max-width: 200px;
+    font-size: 0.875rem;
+  }
+
+  .headCell {
+    font-size: 0.875rem;
+    padding: 0.5em 0.75em;
+  }
+}
+
+/* SMALL TABLET (481px - 768px) */
+@media (max-width: 768px) {
+  .tableComponent {
+    min-width: auto;
+    min-height: auto;
+    max-width: calc(100vw - 1.5rem);
+    margin: 0.5rem auto;
+    border-radius: 8px;
+    border-width: 1px;
+  }
+
+  .tableComponent::before,
+  .tableComponent::after {
+    display: none;
+  }
+
+  .tableWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table {
+    min-width: 600px;
+  }
+
+  .baseCell {
+    padding: 0.5em 0.5em;
+    max-width: 150px;
+    font-size: 0.8125rem;
+  }
+
+  .hierarchyCell {
+    width: 32px;
+    padding: 0.25em;
+  }
+
+  .expandButton {
+    padding: 2px 4px;
+    font-size: 12px;
+  }
+}
+
+/*  MOBILE (max 480px) */
+@media (max-width: 480px) {
+  .tableComponent {
+    min-width: auto;
+    min-height: auto;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    background: #f8f9fa;
+  }
+
+  .tableComponent::before,
+  .tableComponent::after {
+    display: none;
+  }
+
+  .tableWrapper {
+    padding: 0.5rem;
+    overflow-x: visible;
+  }
+
+  .table {
+    display: block;
+    width: 100%;
+    min-width: auto;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .tableRow {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .tableRow:hover {
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .baseCell {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.5rem 0;
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+  }
+
+  .baseCell:last-child {
+    border-bottom: none;
+  }
+
+  .baseCell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6b7280;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    max-width: 40%;
+    margin-right: 0.75rem;
+  }
+
+  .hierarchyCell {
+    display: flex;
+    justify-content: flex-end;
+    width: auto;
+    padding: 0 0 0.5rem 0;
+    order: -1;
+    border-bottom: none;
+  }
+
+  .hierarchyCell::before {
+    display: none;
+  }
+
+  .childRow {
+    background: #fafbfc;
+    border-left: 3px solid #d1d5db;
+  }
+
+  .childRow .baseCell {
+    padding-left: 0;
+    font-style: normal;
+    color: #6b7280;
+  }
+
+  .expandButton {
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
 }

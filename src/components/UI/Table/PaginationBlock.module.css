@@ -42,3 +42,54 @@
 .pageState {
   margin: 0 .6em;
 }
+
+/*  TABLET  */
+@media (max-width: 768px) {
+  .paginationWrapper {
+    padding: 0.5em 0.75em;
+    gap: 1em;
+  }
+
+  .paginationSelect {
+    padding: 0.25em 0.5em;
+    font-size: 0.875rem;
+  }
+
+  .paginationButton {
+    padding: 0.25em 0.5em;
+    font-size: 0.875rem;
+  }
+
+  .pageState {
+    font-size: 0.875rem;
+  }
+}
+
+/*  MOBILE  */
+@media (max-width: 480px) {
+  .paginationWrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.75em;
+    background: #fff;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .paginationSelect {
+    width: 100%;
+    padding: 0.5em;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .paginationButton {
+    padding: 0.5em 1em;
+    font-size: 1rem;
+  }
+
+  .pageState {
+    font-size: 0.875rem;
+    text-align: center;
+  }
+}
