@@ -15,11 +15,12 @@
 
 .tableWrapper {
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: hidden;
   max-width: 100%;
-  max-height: calc(100vh - 200px);
+  height: calc(100vh - 220px);
   padding: 0;
   -webkit-overflow-scrolling: touch;
+  display: block;
 }
 
 .table {
@@ -28,6 +29,22 @@
   min-width: 800px;
   border-spacing: 0;
   table-layout: auto;
+}
+
+.table thead {
+  display: table-header-group;
+}
+
+.table tbody {
+  display: block;
+  max-height: calc(100% - var(--thead-height, 64px));
+  overflow-y: auto;
+}
+
+.table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .tableRow {
