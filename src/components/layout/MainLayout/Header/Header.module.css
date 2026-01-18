@@ -29,7 +29,7 @@
     align-items: center;
     gap: 0.75rem;
     text-decoration: none;
-    color: #222222; /* near black */
+    color: #222222;
     font-weight: 800;
     font-size: 1.2em;
 }
@@ -156,7 +156,7 @@
 }
 
 .loginButton:hover {
-    background-color: #ff7835;
+    background-color: #e0692d;
 }
 
 @media (max-width: 768px) {
