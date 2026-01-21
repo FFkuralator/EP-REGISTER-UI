@@ -54,9 +54,6 @@
     transition: color 0.15s ease, background-color 0.15s ease;
 }
 
-.navLink:hover {
-    background-color: #ffdcca;
-}
 
 .navLink.active {
     color: #FF5400;
@@ -156,7 +153,7 @@
 }
 
 .loginButton:hover {
-    background-color: #e0692d;
+    background-color: #df5008;
 }
 
 @media (max-width: 768px) {
