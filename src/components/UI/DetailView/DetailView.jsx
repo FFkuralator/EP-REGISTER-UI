@@ -11,7 +11,8 @@ export default function DetailView(
     getMetaLabel,
     details,
     sidebar,
-    getSidebarLabel
+    getSidebarLabel,
+    onRefresh
   }
 ) {
   return (
@@ -21,7 +22,7 @@ export default function DetailView(
       <div className={styles.main_column}>
         <div className={styles.column_wrapper}>
           {meta ?
-            <DetailMeta data={meta} getLabel={getMetaLabel}/>
+            <DetailMeta data={meta} getLabel={getMetaLabel} onRefresh={onRefresh} />
             : {}
           }
           {details ?
@@ -41,7 +42,7 @@ export default function DetailView(
             </div>
               {sidebar ?
                 sidebar.map((detail, index) => (
-                  <DetailMeta key={index} data={detail} getLabel={getSidebarLabel} wide={false} />
+                  <DetailMeta key={index} data={detail} getLabel={getSidebarLabel} wide={false} onRefresh={onRefresh} />
                 ))
                 : null
               }

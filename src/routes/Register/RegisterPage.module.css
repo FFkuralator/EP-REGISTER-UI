@@ -51,6 +51,15 @@
   align-items: flex-start;
 }
 
+.sidebarContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 320px;
+  min-width: 220px;
+  flex-shrink: 0;
+}
+
 .contentArea {
   flex: 1;
   min-width: 0;

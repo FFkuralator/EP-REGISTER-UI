@@ -1,0 +1,258 @@
+.tagsManager {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  max-width: 250px;
+}
+
+.tagText {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 12px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.deleteButton:hover {
+  opacity: 1;
+}
+
+.addButton {
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  background: #fafafa;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  width: fit-content;
+}
+
+.addButton:hover {
+  border-color: #40a9ff;
+  background: #f5f5f5;
+}
+
+.addTagForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fafafa;
+}
+
+.addTagTabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.tabButton {
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  font-size: 13px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tabButton:hover {
+  color: #1890ff;
+}
+
+.activeTab {
+  color: #1890ff;
+  border-bottom-color: #1890ff;
+}
+
+.newTagInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addInput {
+  padding: 8px 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.addInput:focus {
+  outline: none;
+  border-color: #40a9ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.existingTagsSearch {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.existingTagsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+}
+
+.existingTagItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.existingTagItem:hover {
+  background-color: #f0f5ff;
+}
+
+.existingTagItem.selected {
+  background-color: #e6f7ff;
+}
+
+.tagCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tagCheckbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.tagLabel {
+  flex: 1;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.familyCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.familyCheckbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.familyLabel {
+  cursor: pointer;
+}
+
+.addTagButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.saveButton {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: #1890ff;
+  color: white;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: #40a9ff;
+}
+
+.saveButton:disabled {
+  background: #d9d9d9;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  background: white;
+  color: #666;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton:hover {
+  border-color: #40a9ff;
+  color: #40a9ff;
+}
+
+.loadingMessage {
+  padding: 12px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+
+.emptyMessage {
+  padding: 12px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}

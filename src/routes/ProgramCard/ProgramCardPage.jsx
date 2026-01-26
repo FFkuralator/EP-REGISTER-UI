@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import DetailView from '../../components/UI/DetailView/DetailView';
 import getGroupNumber from '../../utils/getGroupNumber';
 import getHistoryChanges from '../../utils/getHistoryChanges';
@@ -6,33 +6,38 @@ import Text from '../../components/UI/Text/Text';
 import HistoryItem from '../../components/UI/DetailView/HistoryItem';
 import getProgramLabel from '../../utils/getProgramLabel';
 import getFormattedDate from '../../utils/getFormattedDate';
-import { API_BASE_URL } from '../../config/api';
+import { API_BASE_URL } from '../../api/api';
 import { useParams } from 'react-router';
 
 export default function ProgramCardPage() {  
   const params = useParams();
 
   const [programIerarchy, setProgramIerarchy] = useState();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
-            headers: {
-              "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
-            }
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-        setProgramIerarchy(result);
-      } catch (err) {
-        console.error(err);
-      }
-    };
 
-    fetchData();
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${params.programID}&lang=ru`, {
+          headers: {
+            "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+          }
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      setProgramIerarchy(result);
+    } catch (err) {
+      console.error(err);
+    }
   }, [params.programID]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const refreshData = () => {
+    fetchData();
+  };
 
 
   const dateKeys = [
@@ -137,6 +142,7 @@ export default function ProgramCardPage() {
 
   const sidebar = [
     {
+      tags: program.tags,
       start_year: program.start_year,
       end_year: program.end_year,
       group_number: getGroupNumber(
@@ -152,7 +158,7 @@ export default function ProgramCardPage() {
   
   return (
     <>
-      <DetailView 
+      <DetailView
         header={header}
         headerLinks={headerLinks}
         meta={meta}
@@ -160,6 +166,7 @@ export default function ProgramCardPage() {
         details={details}
         sidebar={sidebar}
         getSidebarLabel={getProgramLabel}
+        onRefresh={refreshData}
       />
     </>
   )

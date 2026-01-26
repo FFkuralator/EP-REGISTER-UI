@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react';
+import TagFilter from './TagFilter';
 import styles from './SidebarFilter.module.css'
 
-export default function SidebarFilter({ onFilter, filterState, columns }) {
+export default function SidebarFilter({ onFilter, filterState, columns, tagFilter, onTagFilterChange }) {
   const filterableColumns = columns.filter((column) => (column.filterOptions || []).length > 0);
   const [openSections, setOpenSections] = useState({});
 
@@ -12,10 +13,6 @@ export default function SidebarFilter({ onFilter, filterState, columns }) {
     setOpenSections(initial);
   }, [columns]);
 
-  if (filterableColumns.length === 0) {
-    return null;
-  }
-
   const toggle = (key) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
   }
@@ -23,6 +20,11 @@ export default function SidebarFilter({ onFilter, filterState, columns }) {
   return (
     <aside className={styles.sidebarFilter}>
       <h2>Фильтры</h2>
+      
+      {tagFilter && onTagFilterChange && (
+        <TagFilter tagFilter={tagFilter} onTagFilterChange={onTagFilterChange} />
+      )}
+
       {filterableColumns.map((column) => {
         const isOpen = !!openSections[column.key];
         return (

@@ -1,3 +1,10 @@
+.tagsSection {
+  margin-bottom: 1.5em;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
 .metaWrapper {
   display: flex;
   column-gap: 1.5em;

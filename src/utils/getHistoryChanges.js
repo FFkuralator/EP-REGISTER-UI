@@ -61,7 +61,7 @@ export default function getHistoryChanges(hierarchy) {
 
 function compareObjects(master, current) {
     const changes = {};
-    const ignoreKeys = new Set(['parent', 'children', 'result', 'count', 'is_active', 'end_year', 'school_code', 'start_year', 'id', 'parent_id', 'description' ]);
+    const ignoreKeys = new Set(['parent', 'children', 'result', 'count', 'is_active', 'end_year', 'school_code', 'start_year', 'id', 'parent_id', 'description', 'tags' ]);
 
     for (const key in master) {
         if (ignoreKeys.has(key)) continue;

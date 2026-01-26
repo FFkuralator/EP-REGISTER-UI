@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../../hooks/useAuth';
 import styles from './LoginModal.module.css';
 
 export default function LoginModal({ isOpen, onClose }) {
@@ -7,7 +6,7 @@ export default function LoginModal({ isOpen, onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login } = useAuth();
+  const { login } = { login: async () => {} }; // Replace with actual context or props
 
   const handleSubmit = async (e) => {
     e.preventDefault();

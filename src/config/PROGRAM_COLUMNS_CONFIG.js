@@ -163,6 +163,12 @@ const PROGRAM_COLUMNS_CONFIG = [
       },
     ]
   },
+  {
+    key: 'tags',
+    title: getProgramLabel('Теги'),
+    sortable: true,
+    cellType: 'allTags',
+  }
 ];
 
 export default PROGRAM_COLUMNS_CONFIG;

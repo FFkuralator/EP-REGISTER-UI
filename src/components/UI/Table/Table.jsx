@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
+import { Link } from 'react-router';
 import styles from './Table.module.css';
 import PaginationBlock from './PaginationBlock';
 import BaseCellRenderer from './BaseCellRenderer';
-import Menu from '../Menu/Menu';
 import TableHead from './TableHead';
 
 export default function Table({
@@ -12,7 +12,6 @@ export default function Table({
   sortState,
   onFilter,
   filterState,
-  menuContent,
   pagination,
   paginationSize,
   handlePageSizeChange,
@@ -20,46 +19,15 @@ export default function Table({
   handlePageChange,
   onToggleHierarchy,
   expandedFamilies,
+  onTagsChange,
 }) {
-  const [menu, setMenu] = useState({
-    visible: false,
-    x: 0,
-    y: 0,
-    row: null,
-  });
 
-  const handleRightClick = useCallback(
-    (e, row) => {
-      if (!menuContent) return;
-
-      e.preventDefault();
-
-      setMenu({
-        visible: true,
-        x: e.clientX,
-        y: e.clientY,
-        row,
-      });
-    },
-    [menuContent]
-  );
-
-  const closeMenu = useCallback(() => {
-    setMenu((m) => ({ ...m, visible: false }));
-  }, []);
-
-  const getProcessedMenuContent = () => {
-    if (!menu.row) return menuContent;
-
-    return menuContent.map((item) => {
-      if (item.href && typeof item.href === 'function') {
-        return { ...item, href: item.href(menu.row) };
-      }
-      if (item.onClick && typeof item.onClick === 'function') {
-        return { ...item, onClick: () => item.onClick(menu.row) };
-      }
-      return item;
-    });
+  const getRowClassName = (row) => {
+    if (row._is_child) {
+      return row._matches_filter === false ? styles.childRowDimmed : styles.childRow;
+    }
+    if (row._is_filtered_match) return styles.filteredMatchRow;
+    return styles.tableRow;
   };
 
   return (
@@ -77,8 +45,7 @@ export default function Table({
                 <tbody>
                   {data.map((row) => (
                     <tr key={`${row.family_id ?? ''}-${row.id}`} 
-                      onContextMenu={(e) => handleRightClick(e, row)}
-                      className={row._is_child ? styles.childRow : styles.tableRow}
+                      className={getRowClassName(row)}
                     >
                       {columns.map((column) => (
                         <td 
@@ -94,8 +61,23 @@ export default function Table({
                                           {expandedFamilies && expandedFamilies.has && expandedFamilies.has(row.family_id) ? '−' : '+'}
                                         </button>
                                       ) : null
+                                    ) : column.key === 'title' ? (
+                                      <Link to={`/program/${row.id}`} className={styles.cellLink}>
+                                        <BaseCellRenderer 
+                                          type={column.cellType || 'text'}
+                                          value={row[column.key ?? '']} 
+                                          row={row}
+                                          onTagsChange={onTagsChange}
+                                        />
+                                      </Link>
                                     ) : (
-                            <BaseCellRenderer value={row[column.key ?? '']} />
+                            <BaseCellRenderer 
+                              type={column.cellType || 'text'}
+                              value={row[column.key ?? '']} 
+                              row={row}
+                              onTagsChange={onTagsChange}
+                              tagName={column.tagName}
+                            />
                           )}
                         </td>
                       ))}
@@ -104,15 +86,6 @@ export default function Table({
                 </tbody>
             </table>
         </div>
-
-
-        { menu.visible &&
-            <Menu 
-                flag={menu}
-                changeFlag={closeMenu}
-                menu={getProcessedMenuContent()}
-            />
-        }
         
         {pagination &&
             <PaginationBlock 

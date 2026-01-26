@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router';
-import { useAuth } from '../../../../hooks/useAuth';
 import LoginModal from '../../../UI/LoginModal/LoginModal';
 import styles from './Header.module.css';
 
@@ -8,7 +7,7 @@ export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const location = useLocation();
-    const { user, isAuthenticated, logout } = useAuth();
+    const { user, isAuthenticated, logout } = {user: null, isAuthenticated: false, logout: () => {}}; // Replace with actual context or props
 
     const navItems = [
         { path: '/', label: 'Главная' },

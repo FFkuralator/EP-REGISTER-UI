@@ -7,9 +7,11 @@ import useDebounce from '../../hooks/useDebounce';
 import getProgramLabel from '../../utils/getProgramLabel';
 import getFormattedDate from '../../utils/getFormattedDate';
 import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
-import { API_BASE_URL } from '../../config/api';
+import { API_BASE_URL } from '../../api/api';
+import { getTags } from '../../api/tag';
 import styles from './RegisterPage.module.css'
 import SidebarFilter from '../../components/UI/Table/SidebarFilter';
+import ColumnSettings from '../../components/UI/Table/ColumnSettings';
 
 export default function RegisterPage() {
   const dateKeys = [
@@ -51,70 +53,69 @@ export default function RegisterPage() {
   const [families, setFamilies] = useState([]);
   const [expandedFamilies, setExpandedFamilies] = useState(new Set());
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await fetch(`${API_BASE_URL}/educational_program/active/get?lang=ru`, {
+  const fetchData = React.useCallback(async () => {
+    try {
+      const result = await fetch(`${API_BASE_URL}/educational_program/active/get?lang=ru`, {
+          headers: {
+            "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+          }
+      });
+      const rawData = await result.json();
+
+      const seenRoots = new Set();
+      const familiesList = [];
+
+      for (const prog of rawData.result) {
+        try {
+          const resp = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${prog.id}&lang=ru`, {
             headers: {
               "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
             }
-        });
-        const rawData = await result.json();
+          });
+          if (!resp.ok) continue;
+          const hRes = await resp.json();
+          if (!hRes || !Array.isArray(hRes.result) || hRes.result.length === 0) continue;
+          const root = hRes.result[0];
+          const rootId = root.id;
+          if (seenRoots.has(rootId)) continue;
 
-        const formatted = formatProgramsData(rawData.result, dateKeys);
+          const members = [];
+          (function collect(node) {
+            if (!node) return;
+            members.push(node);
+            if (Array.isArray(node.children)) node.children.forEach(collect);
+          })(root);
 
-        const seenRoots = new Set();
-        const familiesList = [];
-
-        for (const prog of rawData.result) {
-          try {
-            const resp = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${prog.id}&lang=ru`, {
-              headers: {
-                "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
-              }
-            });
-            if (!resp.ok) continue;
-            const hRes = await resp.json();
-            if (!hRes || !Array.isArray(hRes.result) || hRes.result.length === 0) continue;
-            const root = hRes.result[0];
-            const rootId = root.id;
-            if (seenRoots.has(rootId)) continue;
-
-            const members = [];
-            (function collect(node) {
-              if (!node) return;
-              members.push(node);
-              if (Array.isArray(node.children)) node.children.forEach(collect);
-            })(root);
-
-            let latest = members[0];
-            for (const m of members) {
-              const mYear = m.start_year ?? -Infinity;
-              const lYear = latest.start_year ?? -Infinity;
-              if (mYear > lYear) latest = m;
-              else if (mYear === lYear && m.id > latest.id) latest = m;
-            }
-
-            const formattedMembers = formatProgramsData(members, dateKeys);
-            const formattedLatest = formatProgramsData([latest], dateKeys)[0];
-            formattedLatest._has_multiple = (formattedMembers.length > 1);
-
-            familiesList.push({ familyId: rootId, latest: formattedLatest, members: formattedMembers });
-            seenRoots.add(rootId);
-          } catch (error) {
-            console.error('Ошибка загрузки иерархии:', error);
+          let latest = members[0];
+          for (const m of members) {
+            const mYear = m.start_year ?? -Infinity;
+            const lYear = latest.start_year ?? -Infinity;
+            if (mYear > lYear) latest = m;
+            else if (mYear === lYear && m.id > latest.id) latest = m;
           }
-        }
 
-        setFamilies(familiesList);
-        setRowData(familiesList.map(f => f.latest));
-        setDataCount(familiesList.length);
-      } catch (error) {
-        console.error('Ошибка загрузки данных:', error);
+          const formattedMembers = formatProgramsData(members, dateKeys);
+          const formattedLatest = formatProgramsData([latest], dateKeys)[0];
+          formattedLatest._has_multiple = (formattedMembers.length > 1);
+
+          familiesList.push({ familyId: rootId, latest: formattedLatest, members: formattedMembers });
+          seenRoots.add(rootId);
+        } catch (error) {
+          console.error('Ошибка загрузки иерархии:', error);
+        }
       }
-    };
-    fetchData();
+
+      setFamilies(familiesList);
+      setRowData(familiesList.map(f => f.latest));
+      setDataCount(familiesList.length);
+    } catch (error) {
+      console.error('Ошибка загрузки данных:', error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const [sort, setSort] = useState({
     by: null,
@@ -130,6 +131,8 @@ export default function RegisterPage() {
   };
 
   const [filter, setFilter] = useState({});
+  const [tagFilter, setTagFilter] = useState({ tags: {}, mode: 'and' });
+  
   const handleFilter = (columnKey, value) => {
     setFilter((prev) => {
       const existing = prev[columnKey] || [];
@@ -188,6 +191,30 @@ export default function RegisterPage() {
 
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 800);
+  const [allTags, setAllTags] = useState([]);
+  const [columnOrder, setColumnOrder] = useState([]);
+  const [visibleColumns, setVisibleColumns] = useState([]);
+
+  useEffect(() => {
+    getTags().then(res => setAllTags(res.result || [])).catch(() => {});
+  }, []);
+
+  const uniqueTagNames = React.useMemo(() => {
+    const names = new Set();
+    allTags.forEach(tag => names.add(tag.name));
+    return [...names];
+  }, [allTags]);
+
+  const tagColumns = React.useMemo(() => {
+    return uniqueTagNames.map(name => ({
+      key: `tag_${name}`,
+      title: name,
+      tagName: name,
+      cellType: 'tagColumn',
+      isTagColumn: true,
+      sortable: false
+    }));
+  }, [uniqueTagNames]);
 
   const columnsWithFilters = React.useMemo(() => {
     return PROGRAM_COLUMNS_CONFIG.map(column => {
@@ -217,14 +244,46 @@ export default function RegisterPage() {
     });
   }, [rowData]);
 
-  const displayColumns = React.useMemo(() => {
-    return [
-      { key: '__hierarchy', title: '' },
-      ...columnsWithFilters
-    ];
-  }, [columnsWithFilters]);
+  const allColumns = React.useMemo(() => {
+    return [...columnsWithFilters, ...tagColumns];
+  }, [columnsWithFilters, tagColumns]);
 
-    const processedData = React.useMemo(() => {
+  useEffect(() => {
+    if (allColumns.length > 0 && columnOrder.length === 0) {
+      setColumnOrder(allColumns.map(c => c.key));
+      setVisibleColumns(columnsWithFilters.map(c => c.key));
+    }
+  }, [allColumns, columnsWithFilters, columnOrder.length]);
+
+  const orderedColumns = React.useMemo(() => {
+    const colMap = Object.fromEntries(allColumns.map(c => [c.key, c]));
+    return columnOrder.filter(k => colMap[k]).map(k => colMap[k]);
+  }, [allColumns, columnOrder]);
+
+  const displayColumns = React.useMemo(() => {
+    const visible = orderedColumns.filter(c => visibleColumns.includes(c.key));
+    return [{ key: '__hierarchy', title: '' }, ...visible];
+  }, [orderedColumns, visibleColumns]);
+
+  const handleColumnOrderChange = (newOrder) => {
+    setColumnOrder(newOrder.map(c => c.key));
+  };
+
+  const matchesTagFilter = (row) => {
+    const includes = Object.entries(tagFilter.tags).filter(([, m]) => m === 'include').map(([id]) => parseInt(id));
+    const excludes = Object.entries(tagFilter.tags).filter(([, m]) => m === 'exclude').map(([id]) => parseInt(id));
+    
+    const rowTagIds = row.tags ? Object.values(row.tags).map(t => t.id) : [];
+    
+    if (excludes.some(id => rowTagIds.includes(id))) return false;
+    if (includes.length === 0) return true;
+    
+    return tagFilter.mode === 'and'
+      ? includes.every(id => rowTagIds.includes(id))
+      : includes.some(id => rowTagIds.includes(id));
+  };
+
+  const processedData = React.useMemo(() => {
     let result = [...rowData];
 
     if (debouncedSearch.trim()) {
@@ -243,6 +302,10 @@ export default function RegisterPage() {
           return values.includes(String(row[columnKey]));
         });
       });
+    }
+
+    if (Object.keys(tagFilter.tags).length > 0) {
+      result = result.filter(matchesTagFilter);
     }
 
     if (sort.by) {
@@ -266,20 +329,75 @@ export default function RegisterPage() {
     }
 
     return result;
-  }, [rowData, debouncedSearch, filter, sort]);
+  }, [rowData, debouncedSearch, filter, tagFilter, sort]);
+
+  const hasActiveFilters = debouncedSearch.trim() || Object.keys(filter).length > 0 || Object.keys(tagFilter.tags).length > 0;
+
+  const matchesAllFilters = (row) => {
+    if (debouncedSearch.trim()) {
+      const searchLower = debouncedSearch.toLowerCase();
+      if (!Object.values(row).some(v => String(v).toLowerCase().includes(searchLower))) return false;
+    }
+    if (Object.keys(filter).length > 0) {
+      const matches = Object.entries(filter).every(([columnKey, values]) => {
+        if (!values || values.length === 0) return true;
+        return values.includes(String(row[columnKey]));
+      });
+      if (!matches) return false;
+    }
+    if (Object.keys(tagFilter.tags).length > 0 && !matchesTagFilter(row)) return false;
+    return true;
+  };
 
   const tableData = React.useMemo(() => {
     const out = [];
+    const processedIds = new Set(processedData.map(r => r.id));
+    
     for (const f of families) {
-      out.push({ ...f.latest, family_id: f.familyId, _is_latest: true });
-      if (expandedFamilies.has(f.familyId)) {
-        const others = f.members.filter(m => m.id !== f.latest.id).map(m => ({ ...m, family_id: f.familyId, _is_child: true }));
-        out.push(...others);
+      const latestMatches = processedIds.has(f.latest.id);
+      
+      if (latestMatches) {
+        out.push({ ...f.latest, family_id: f.familyId, _is_latest: true });
+        if (expandedFamilies.has(f.familyId)) {
+          const others = f.members
+            .filter(m => m.id !== f.latest.id)
+            .map(m => ({ ...m, family_id: f.familyId, _is_child: true }));
+          out.push(...others);
+        }
+      } else if (hasActiveFilters) {
+        const matchingMembers = f.members.filter(m => matchesAllFilters(m));
+        if (matchingMembers.length > 0) {
+          const bestMatch = matchingMembers.reduce((best, m) => {
+            const mYear = m.start_year ?? -Infinity;
+            const bYear = best.start_year ?? -Infinity;
+            return mYear > bYear || (mYear === bYear && m.id > best.id) ? m : best;
+          }, matchingMembers[0]);
+          
+          out.push({ 
+            ...bestMatch, 
+            family_id: f.familyId, 
+            _is_latest: true, 
+            _is_filtered_match: true,
+            _has_multiple: matchingMembers.length > 1 || f.members.length > 1
+          });
+          
+          if (expandedFamilies.has(f.familyId)) {
+            const others = f.members
+              .filter(m => m.id !== bestMatch.id)
+              .map(m => ({ 
+                ...m, 
+                family_id: f.familyId, 
+                _is_child: true,
+                _matches_filter: matchesAllFilters(m)
+              }));
+            out.push(...others);
+          }
+        }
       }
     }
-    const processedIds = new Set(processedData.map(r => r.id));
-    return out.filter(r => processedIds.has(r.id) || r._is_child);
-  }, [families, expandedFamilies, processedData]);
+    
+    return out;
+  }, [families, expandedFamilies, processedData, hasActiveFilters, debouncedSearch, filter, tagFilter]);
 
   const toggleFamily = (familyId) => {
     setExpandedFamilies(prev => {
@@ -289,6 +407,10 @@ export default function RegisterPage() {
       return copy;
     });
   }
+
+  const refreshData = () => {
+    fetchData();
+  };
 
   return (
     <div className={styles.container}>
@@ -307,11 +429,21 @@ export default function RegisterPage() {
       </div>
 
       <div className={styles.mainContent}>
-        <SidebarFilter
-          onFilter={handleFilter}
-          filterState={filter}
-          columns={columnsWithFilters}
-        />
+        <div className={styles.sidebarContainer}>
+          <ColumnSettings
+            columns={orderedColumns}
+            visibleColumns={visibleColumns}
+            onColumnsChange={setVisibleColumns}
+            onOrderChange={handleColumnOrderChange}
+          />
+          <SidebarFilter
+            onFilter={handleFilter}
+            filterState={filter}
+            columns={columnsWithFilters}
+            tagFilter={tagFilter}
+            onTagFilterChange={setTagFilter}
+          />
+        </div>
 
         <div className={styles.contentArea}>
           <Table
@@ -323,24 +455,11 @@ export default function RegisterPage() {
             sortState={sort}
             onFilter={handleFilter}
             filterState={filter}
-            menuContent={[
-              {
-                label: 'Открыть',
-                href: (row) => `/program/${row.id}`,
-              },
-              {
-                label: 'Редактировать',
-                href: (row) => `/program/${row.id}/edit`,
-              },
-              {
-                label: 'Создать новую ОП на основе',
-                href: (row) => `/program/${row.id}/add`,
-              },
-            ]}
             pagination={true}
             paginationData={paginationData}
             handlePageChange={handlePageChange}
             handlePageSizeChange={handlePageSizeChange}
+            onTagsChange={refreshData}
           />
         </div>
       </div>

@@ -29,6 +29,20 @@
   user-select: none;
 }
 
+.cellLink {
+  color: #595959;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.cellLink:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
 .childRow {
   background-color: transparent;
   color: #444;
@@ -37,6 +51,24 @@
 .childRow .baseCell {
   padding-left: 1.2em;
   font-style: italic;
+}
+
+.childRowDimmed {
+  background-color: transparent;
+  color: #aaa;
+}
+
+.childRowDimmed .baseCell {
+  padding-left: 1.2em;
+  font-style: italic;
+}
+
+.filteredMatchRow {
+  background-color: #fffbe6;
+}
+
+.filteredMatchRow:hover {
+  background-color: #fff1b8;
 }
 
 .hierarchyCell {

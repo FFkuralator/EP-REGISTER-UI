@@ -1,7 +1,5 @@
 .sidebarFilter {
-  width: 320px;
-  min-width: 220px;
-  flex: 0 0 320px;
+  width: 100%;
   box-sizing: border-box;
   background-color: #ffffff;
   border-radius: 12px;
@@ -9,14 +7,12 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   border: 1px solid #e9ecef;
   height: fit-content;
-  max-height: calc(100vh - 6rem);
+  max-height: calc(100vh - 12rem);
   overflow-y: auto;
 } 
 
 @media (max-width: 800px) {
   .sidebarFilter {
-    width: 100%;
-    flex: none;
     max-height: none;
   }
 }

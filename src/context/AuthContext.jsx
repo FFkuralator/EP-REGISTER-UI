@@ -1,6 +1,5 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
-import { apiPost } from '../config/apiClient';
-
+import api from '../api';
 export const AuthContext = createContext(undefined);
 
 export function AuthProvider({ children }) {
@@ -24,7 +23,7 @@ export function AuthProvider({ children }) {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await apiPost('/auth/login?lang=ru', {
+      const data = await api.post('/auth/login?lang=ru', {
         email,
         password,
       });
