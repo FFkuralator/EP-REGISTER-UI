@@ -21,9 +21,18 @@
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-
-.createButton:active {
-  transform: translateY(0);
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background-color: #FF5400;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .modalOverlay {
@@ -47,13 +56,15 @@
 
 .modal {
   background: white;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 90%;
-  max-width: 80%;
+  max-width: 800px;
   max-height: 80vh;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   animation: slideIn 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideIn {
@@ -71,15 +82,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem;
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   background: #EDEDED;
 }
 
 .modalHeader h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
+  color: #111;
 }
 
 .closeButton {
@@ -93,70 +105,248 @@
 }
 
 .closeButton:hover {
-  background-color: #f3f4f6;
+  background-color: rgba(0, 0, 0, 0.1);
   color: #374151;
 }
 
-.modalContent {
-  padding: 20px;
+
+.modalBody {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 200px;
+  min-width: 200px;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tabsList {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+}
+
+.tabItem {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 16px 20px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.tabItem:hover {
+  background-color: #f9fafb;
+  color: #111;
+}
+
+.tabItemActive {
+  border-left-color: #FF5400;
+  color: #FF5400;
+  font-weight: 600;
+  background-color: #fff;
+}
+
+.sidebarActions {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.applyButton {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #FF5400;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.applyButton:hover {
+  background-color: #e64d00;
+}
+
+.resetButton {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetButton:hover {
+  background-color: #e5e7eb;
+  border-color: #9ca3af;
+}
+
+.contentArea {
+  flex: 1;
+  padding: 20px 24px;
   overflow-y: auto;
-  max-height: calc(80vh - 80px);
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-areas:
-    "field1 field2"
-    "field3 field4";
-  gap: 30px;
-  align-content: start;
+  background: #fff;
+}
+
+.searchWrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 12px 10px 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #374151;
+  background: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #FF5400;
+}
+
+.searchInput::placeholder {
+  color: #9ca3af;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+.filtersContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .filterSection {
-  margin-bottom: 24px;
+  margin-bottom: 0;
 }
 
 .sectionTitle {
-  font-size: 0.95rem;;
+  font-size: 0.9rem;
   font-weight: 600;
   margin: 0 0 12px 0;
-  color: #374151;
+  color: #111;
 }
 
 .options {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .filterOption {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 0;
+  gap: 10px;
+  padding: 8px 10px;
   cursor: pointer;
   font-size: 0.95rem;
-  color: #4b5563;
+  color: #374151;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
 }
 
 .filterOption:hover {
-  color: #1f2937;
+  background-color: #f5f5f5;
 }
 
 .filterOption input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
+  accent-color: #FF5400;
 }
 
 @media (max-width: 768px) {
   .modal {
-    width: 80%;
-    max-width: 80%;
-    max-height: 100vh;
-    border-radius: 0;
-    margin: 0;
+    width: 95%;
+    max-width: 95%;
+    max-height: 90vh;
   }
 
-  .modalContent {
-    max-height: calc(100vh - 80px);
+  .modalBody {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .tabsList {
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabItem {
+    white-space: nowrap;
+    padding: 12px 16px;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+  }
+
+  .tabItemActive {
+    border-left-color: transparent;
+    border-bottom-color: #FF5400;
+  }
+
+  .sidebarActions {
+    flex-direction: row;
+    border-top: none;
+    padding: 12px 16px;
+  }
+
+  .applyButton,
+  .resetButton {
+    flex: 1;
+  }
+
+  .contentArea {
+    max-height: 50vh;
+    padding: 16px;
   }
 }
