@@ -3,8 +3,47 @@
   border: 1px solid lightgrey;
   padding: .6em 1em;
   color: grey;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
-.input:focus {
-  color: black;
+.default{
+}
+
+.registerPage {
+  width: 19rem;
+  height: 40px;
+  border-radius: 8px;
+  gap: 10px;
+  background-color: #111;
+  border: none;
+  padding: 0.5rem 1rem;
+  flex: 1;
+  color: #FFFFFF;
+}
+
+.registerPage::placeholder {
+  display: inline-flex;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  width: 160;
+  height: 20;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.withIcon {
+  padding-left: 40px !important;
 }

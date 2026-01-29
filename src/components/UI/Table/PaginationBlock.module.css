@@ -1,44 +1,137 @@
 .paginationWrapper {
   display: flex;
-  justify-content: space-between;
-  gap: 2em;
-  padding: .6em .4em;
-  border-top: 1px solid black;
+  flex-direction: column;
+  gap: .5rem;
+  padding: .6em .8em;
   margin-top: 6px;
+  background: transparent;
+}
+
+.topRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.leftControls {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
 }
 
 .paginationSelect {
-    padding: .3em .4em;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #fff;
-    cursor: pointer;
-    outline: none;
+  padding: .4em .6em;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
 }
 
 .paginationSelect:hover {
-    border-color: #999;
+  border-color: #d1d5db;
+}
+
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
 }
 
 .paginationButton {
-    padding: .3em .4em;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background-color: transparent;
+  padding: .4em .6em;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fff;
 }
 
-.paginationButton:hover {
-    background: #ececec;
-    border-color: #bbb;
+.paginationButton:hover:not(:disabled) {
+  background: #f3f4f6;
 }
 
 .paginationButton.disabled,
 .paginationButton:disabled {
-    opacity: 0.5;
-    cursor: default;
+  opacity: 0.5;
+  cursor: default;
 }
 
 .pageState {
   margin: 0 .6em;
+}
+
+.infoRow {
+  text-align: center;
+  color: #6b7280;
+  font-weight: 600;
+  padding-top: .5rem;
+}
+
+/* responsive */
+@media (max-width: 480px) {
+  .topRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rightControls {
+    justify-content: space-between;
+  }
+
+  .infoRow {
+    padding-top: .25rem;
+    font-size: 0.95rem;
+  }
+}
+
+/*  TABLET  */
+@media (max-width: 768px) {
+  .paginationWrapper {
+    padding: 0.5em 0.75em;
+    gap: 1em;
+  }
+
+  .paginationSelect {
+    padding: 0.25em 0.5em;
+    font-size: 0.875rem;
+  }
+
+  .paginationButton {
+    padding: 0.25em 0.5em;
+    font-size: 0.875rem;
+  }
+
+  .pageState {
+    font-size: 0.875rem;
+  }
+}
+
+/*  MOBILE  */
+@media (max-width: 480px) {
+  .paginationWrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.75em;
+    background: #fff;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .paginationSelect {
+    width: 100%;
+    padding: 0.5em;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .paginationButton {
+    padding: 0.5em 1em;
+    font-size: 1rem;
+  }
+
+  .pageState {
+    font-size: 0.875rem;
+    text-align: center;
+  }
 }

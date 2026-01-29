@@ -9,7 +9,8 @@ import getFormattedDate from '../../utils/getFormattedDate';
 import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
 import { API_BASE_URL } from '../../config/api';
 import styles from './RegisterPage.module.css'
-import SidebarFilter from '../../components/UI/Table/SidebarFilter';
+import ModalPopup from '../../components/UI/Table/ModalPopup';
+import searchIcon from '../../../public/search.png';
 
 export default function RegisterPage() {
   const dateKeys = [
@@ -137,6 +138,10 @@ export default function RegisterPage() {
       const updated = exists ? existing.filter((v) => v !== value) : [...existing, value];
       return { ...prev, [columnKey]: updated };
     });
+  };
+
+  const handleResetFilters = () => {
+    setFilter({});
   };
 
   const [paginationData, setPaginationData] = useState({
@@ -293,10 +298,18 @@ export default function RegisterPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        <ModalPopup
+          onFilter={handleFilter}
+          filterState={filter}
+          columns={columnsWithFilters}
+          onResetFilters={handleResetFilters}
+        />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по полям"
+          variant="registerPage"
+          icon={<img src={searchIcon} alt="Search" width={16} height={16} />}
         />
         <Link
           className={styles.createButton}
@@ -304,46 +317,50 @@ export default function RegisterPage() {
         >
           Создать ОП
         </Link>
+        <button
+          type="button"
+          className={styles.exportButton}
+          aria-label="Экспорт"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 3v10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M8 9l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M21 21H3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span>Экспорт</span>
+        </button>
       </div>
 
-      <div className={styles.mainContent}>
-        <SidebarFilter
-          onFilter={handleFilter}
-          filterState={filter}
-          columns={columnsWithFilters}
-        />
-
-        <div className={styles.contentArea}>
-          <Table
-            columns={displayColumns}
-            data={tableData}
-            onToggleHierarchy={toggleFamily}
-            expandedFamilies={expandedFamilies}
-            onSort={handleSort}
-            sortState={sort}
-            onFilter={handleFilter}
-            filterState={filter}
-            menuContent={[
-              {
-                label: 'Открыть',
-                href: (row) => `/program/${row.id}`,
-              },
-              {
-                label: 'Редактировать',
-                href: (row) => `/program/${row.id}/edit`,
-              },
-              {
-                label: 'Создать новую ОП на основе',
-                href: (row) => `/program/${row.id}/add`,
-              },
-            ]}
-            pagination={true}
-            paginationData={paginationData}
-            handlePageChange={handlePageChange}
-            handlePageSizeChange={handlePageSizeChange}
-          />
-        </div>
-      </div>
+    <div className={styles.contentArea}>
+      <Table
+        columns={displayColumns}
+        data={tableData}
+        onToggleHierarchy={toggleFamily}
+        expandedFamilies={expandedFamilies}
+        onSort={handleSort}
+        sortState={sort}
+        onFilter={handleFilter}
+        filterState={filter}
+        menuContent={[
+          {
+            label: 'Открыть',
+            href: (row) => `/program/${row.id}`,
+          },
+          {
+            label: 'Редактировать',
+            href: (row) => `/program/${row.id}/edit`,
+          },
+          {
+            label: 'Создать новую ОП на основе',
+            href: (row) => `/program/${row.id}/add`,
+          },
+        ]}
+        pagination={true}
+        paginationData={paginationData}
+        handlePageChange={handlePageChange}
+        handlePageSizeChange={handlePageSizeChange}
+      />
     </div>
+  </div>
   );
 }

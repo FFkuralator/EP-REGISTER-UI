@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useLayoutEffect } from 'react';
 import styles from './Table.module.css';
 import PaginationBlock from './PaginationBlock';
 import BaseCellRenderer from './BaseCellRenderer';
@@ -27,6 +27,22 @@ export default function Table({
     y: 0,
     row: null,
   });
+
+  const wrapperRef = useRef(null);
+
+  useLayoutEffect(() => {
+    function updateHeaderHeight() {
+      const wrapper = wrapperRef.current;
+      if (!wrapper) return;
+      const thead = wrapper.querySelector('thead');
+      const headerHeight = thead ? thead.offsetHeight : 0;
+      wrapper.style.setProperty('--thead-height', `${headerHeight}px`);
+    }
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, []);
 
   const handleRightClick = useCallback(
     (e, row) => {
@@ -64,7 +80,7 @@ export default function Table({
 
   return (
     <div className={styles.tableComponent}>
-        <div className={ styles.tableWrapper }>
+        <div ref={wrapperRef} className={ styles.tableWrapper }>
             <table className={styles.table}>
                 <TableHead
                     columns={columns}
@@ -83,6 +99,7 @@ export default function Table({
                       {columns.map((column) => (
                         <td 
                           key={column.key}
+                          data-label={column.title || column.key}
                           className={column.key === '__hierarchy' ? styles.hierarchyCell : styles.baseCell}
                         >
                                     {column.key === '__hierarchy' ? (
