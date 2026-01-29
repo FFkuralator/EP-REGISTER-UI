@@ -3,6 +3,14 @@ import { apiPost } from '../config/apiClient';
 
 export const AuthContext = createContext(undefined);
 
+/**
+ * Authentication provider that wraps the application.
+ * Manages auth state and persists session to localStorage.
+ * 
+ * @component
+ * @param {Object} props
+ * @param {React.ReactNode} props.children
+ */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +28,14 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  /**
+   * Authenticates user and saves session to localStorage.
+   * 
+   * @param {string} email
+   * @param {string} password
+   * @returns {Promise<Object>} Server response with user data
+   * @throws {Error} On authentication failure
+   */
   const login = useCallback(async (email, password) => {
     setIsLoading(true);
     setError(null);
