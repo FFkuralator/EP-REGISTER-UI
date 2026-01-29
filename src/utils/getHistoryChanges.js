@@ -1,3 +1,10 @@
+/**
+ * Extracts and analyzes change history from program hierarchy.
+ * Compares sequential program versions and identifies differences.
+ * 
+ * @param {Object} hierarchy - Program hierarchy from API
+ * @returns {Array<Object>} Array of changes sorted from newest to oldest
+ */
 export default function getHistoryChanges(hierarchy) {
     const allPrograms = [];
     const visitedIds = new Set();
@@ -59,6 +66,7 @@ export default function getHistoryChanges(hierarchy) {
     return differences.reverse();
 }
 
+/** Compares two program objects and finds differences. Ignores hierarchy fields. */
 function compareObjects(master, current) {
     const changes = {};
     const ignoreKeys = new Set(['parent', 'children', 'result', 'count', 'is_active', 'end_year', 'school_code', 'start_year', 'id', 'parent_id', 'description' ]);

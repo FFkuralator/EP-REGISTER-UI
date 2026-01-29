@@ -1,3 +1,4 @@
+/** Field name to Russian label mapping */
 const keys = {
   network_form: "Сетевая форма реализации",
   educational_form: "Форма обучения",
@@ -27,6 +28,7 @@ const keys = {
   group_number: "Номер группы",
 }
 
+/** Enum value to Russian label mapping */
 const values = {
   OFFLINE: 'Очно',
   ONLINE: 'Заочно',
@@ -40,6 +42,13 @@ const values = {
   UNKNOWN: 'Неизвестен',
 }
 
+/**
+ * Returns human-readable Russian label for a field key or enum value.
+ * 
+ * @param {string} key - Field key or enum value
+ * @param {string} [type='key'] - 'key' for field names, 'value' for enum values
+ * @returns {string} Russian label or original key if not found
+ */
 export default function getProgramLabel( key, type ) {
   if (type == 'value') {
     return values[key] || key;
