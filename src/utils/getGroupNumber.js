@@ -1,3 +1,15 @@
+/**
+ * Generates educational program group number.
+ * Format: {Degree}{School}{Form}{Year}-{FieldCode}{ShortTitle}
+ * 
+ * @param {string} degree_title - Degree level
+ * @param {string} school_code - School code
+ * @param {string} educational_form - OFFLINE or ONLINE
+ * @param {number} start_year - Start year
+ * @param {string} field_of_study_code - Field of study code
+ * @param {string} title_short - Short program title
+ * @returns {string} Generated group number
+ */
 export default function getGroupNumber(
   degree_title, 
   school_code, 
