@@ -1,6 +1,18 @@
 import { DEFAULT_VALUES, INHERITED_FIELDS } from "../config/constants";
 import { extractPartnerIds, extractSchoolId, extractDegreeId, extractFieldOfStudyId } from './dataExtractors'; 
 
+/**
+ * Builds form data object for program editing/creation.
+ * Handles inheritance of fields from parent program in add mode.
+ * 
+ * @param {Object|null} program - Source program data or null for new
+ * @param {boolean} isAdd - True if creating new program
+ * @param {Array} allSchools - Available schools list
+ * @param {Array} allDegrees - Available degrees list
+ * @param {Array} allFieldOfStudies - Available fields of study
+ * @param {Array} allPartners - Available partners list
+ * @returns {Object} Form data object with all fields
+ */
 export const buildFormData = (program, isAdd, allSchools, allDegrees, allFieldOfStudies, allPartners) => {
   const baseData = { ...DEFAULT_VALUES };
   

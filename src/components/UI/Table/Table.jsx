@@ -5,6 +5,9 @@ import BaseCellRenderer from './BaseCellRenderer';
 import Menu from '../Menu/Menu';
 import TableHead from './TableHead';
 
+/**
+ * Generic table component with sorting, filtering, context menu and hierarchy support.
+ */
 export default function Table({
   columns,
   data,
@@ -21,6 +24,7 @@ export default function Table({
   onToggleHierarchy,
   expandedFamilies,
 }) {
+  /** @type {[Object, Function]} Состояние контекстного меню */
   const [menu, setMenu] = useState({
     visible: false,
     x: 0,
@@ -30,6 +34,10 @@ export default function Table({
 
   const wrapperRef = useRef(null);
 
+  /**
+   * Динамически обновляет CSS-переменную высоты заголовка таблицы.
+   * Необходимо для правильного позиционирования sticky-элементов.
+   */
   useLayoutEffect(() => {
     function updateHeaderHeight() {
       const wrapper = wrapperRef.current;
@@ -39,6 +47,12 @@ export default function Table({
       wrapper.style.setProperty('--thead-height', `${headerHeight}px`);
     }
 
+  /**
+   * Обработчик правого клика для показа контекстного меню.
+   * 
+   * @param {React.MouseEvent} e - Событие мыши
+   * @param {Object} row - Данные строки
+   */
     updateHeaderHeight();
     window.addEventListener('resize', updateHeaderHeight);
     return () => window.removeEventListener('resize', updateHeaderHeight);
@@ -54,6 +68,9 @@ export default function Table({
         visible: true,
         x: e.clientX,
         y: e.clientY,
+  /**
+   * Закрывает контекстное меню.
+   */
         row,
       });
     },
@@ -61,6 +78,12 @@ export default function Table({
   );
 
   const closeMenu = useCallback(() => {
+  /**
+   * Генерирует элементы меню с подставленными данными строки.
+   * Заменяет функции href/onClick на конкретные значения.
+   * 
+   * @returns {Array<Object>} - Обработанный массив элементов меню
+   */
     setMenu((m) => ({ ...m, visible: false }));
   }, []);
 

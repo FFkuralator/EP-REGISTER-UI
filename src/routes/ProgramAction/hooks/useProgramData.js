@@ -2,6 +2,14 @@ import React, {useEffect, useState} from "react";
 import { fetchOptions, fetchProgram } from '../api/index';
 import { buildFormData } from "../utils/buildFormData";
 
+/**
+ * Hook for loading and managing educational program form data.
+ * Fetches program data, related options (schools, degrees, etc.) and builds form state.
+ * 
+ * @param {string} programID - Program ID or "new" for new program
+ * @param {boolean} isAddMode - True if creating new program based on existing
+ * @returns {Object} Form data, setters, and loaded options
+ */
 export default function useProgramData(programID, isAddMode) {
   const [formData, setFormData] = useState();
   const [program, setProgram] = useState();

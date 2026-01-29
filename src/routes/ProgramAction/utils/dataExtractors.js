@@ -1,3 +1,4 @@
+/** Extracts partner IDs from partner titles array */
 export const extractPartnerIds = (partnerTitles, allPartners) => {
   if (!Array.isArray(partnerTitles)) return [];
   return partnerTitles
