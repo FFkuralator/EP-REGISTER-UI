@@ -20,8 +20,10 @@ export default function Table({
   onToggleHierarchy,
   expandedFamilies,
   onTagsChange,
+  menuContent,
 }) {
 
+  const [menu, setMenu] = useState({ visible: false, x: 0, y: 0, row: null });
   const wrapperRef = useRef(null);
 
   useLayoutEffect(() => {
