@@ -317,6 +317,9 @@ export default function ModalPopup({ onFilter, filterState, columns, onResetFilt
                                 };
 
                                 const displayValue = getDisplayValue(tag);
+                                if (displayValue === '—') {
+                                  console.debug('ModalPopup: empty tag display value', tag);
+                                }
 
                                 return (
                                   <div 
