@@ -32,19 +32,14 @@
 }
 
 .table thead {
-  display: table-header-group;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
 }
 
 .table tbody {
-  display: block;
-  max-height: calc(100% - var(--thead-height, 64px));
-  overflow-y: auto;
-}
-
-.table tbody tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
+  display: table-row-group;
 }
 
 .tableRow {
