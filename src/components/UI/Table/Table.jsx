@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useRef, useLayoutEffect } from 'react';
 import { Link } from 'react-router';
 import styles from './Table.module.css';
 import PaginationBlock from './PaginationBlock';
@@ -22,6 +22,56 @@ export default function Table({
   onTagsChange,
 }) {
 
+  const wrapperRef = useRef(null);
+
+  useLayoutEffect(() => {
+    function updateHeaderHeight() {
+      const wrapper = wrapperRef.current;
+      if (!wrapper) return;
+      const thead = wrapper.querySelector('thead');
+      const headerHeight = thead ? thead.offsetHeight : 0;
+      wrapper.style.setProperty('--thead-height', `${headerHeight}px`);
+    }
+
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, []);
+
+  const handleRightClick = useCallback(
+    (e, row) => {
+      if (!menuContent) return;
+
+      e.preventDefault();
+
+      setMenu({
+        visible: true,
+        x: e.clientX,
+        y: e.clientY,
+        row,
+      });
+    },
+    [menuContent]
+  );
+
+  const closeMenu = useCallback(() => {
+    setMenu((m) => ({ ...m, visible: false }));
+  }, []);
+
+  const getProcessedMenuContent = () => {
+    if (!menu.row) return menuContent;
+
+    return menuContent.map((item) => {
+      if (item.href && typeof item.href === 'function') {
+        return { ...item, href: item.href(menu.row) };
+      }
+      if (item.onClick && typeof item.onClick === 'function') {
+        return { ...item, onClick: () => item.onClick(menu.row) };
+      }
+      return item;
+    });
+  };
+
   const getRowClassName = (row) => {
     if (row._is_child) {
       return row._matches_filter === false ? styles.childRowDimmed : styles.childRow;
@@ -32,7 +82,7 @@ export default function Table({
 
   return (
     <div className={styles.tableComponent}>
-        <div className={ styles.tableWrapper }>
+        <div ref={wrapperRef} className={ styles.tableWrapper }>
             <table className={styles.table}>
                 <TableHead
                     columns={columns}
@@ -50,6 +100,7 @@ export default function Table({
                       {columns.map((column) => (
                         <td 
                           key={column.key}
+                          data-label={column.title || column.key}
                           className={column.key === '__hierarchy' ? styles.hierarchyCell : styles.baseCell}
                         >
                                     {column.key === '__hierarchy' ? (

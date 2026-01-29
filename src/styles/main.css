@@ -5,6 +5,11 @@
     font-family: "Inter", sans-serif;
 }
 
+html, body, #root {
+    min-height: 100vh;
+}
+
 body {
     font-size: 14px;
+    background-color: #f0f2f5;
 }

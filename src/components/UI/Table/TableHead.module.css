@@ -5,7 +5,7 @@
 }
 
 .tableHeadRow {
-  border-bottom: 1px solid black;
+  border-bottom: none;
 }
 
 .headCell {
@@ -23,5 +23,27 @@
 }
 
 .sortableHeadCell:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
+}
+
+/*  TABLET  */
+@media (max-width: 1024px) {
+  .headCell {
+    font-size: 0.875rem;
+    padding: 0.5em 0.75em;
+    gap: 0.5em;
+  }
+}
+
+/*  SMALL TABLET  */
+@media (max-width: 768px) {
+  .headCell {
+    font-size: 0.8125rem;
+    padding: 0.4em 0.5em;
+    gap: 0.35em;
+  }
+
+  .tableHead::after {
+    height: 4px;
+  }
 }
