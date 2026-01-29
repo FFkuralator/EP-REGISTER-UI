@@ -1,5 +1,14 @@
 import { API_BASE_URL } from './api';
 
+/**
+ * Base function for making HTTP requests to the API.
+ * Automatically prepends base URL, sets headers, and handles errors.
+ * 
+ * @param {string} endpoint - API endpoint (without base URL)
+ * @param {Object} [options={}] - Fetch request options
+ * @returns {Promise<Object|Response>} JSON response or Response object
+ * @throws {Error} Error with status and data fields on non-ok response
+ */
 export async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   

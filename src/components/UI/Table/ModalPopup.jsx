@@ -3,6 +3,7 @@ import { X, Search } from 'lucide-react'
 import filterIcon from '../../../../public/filterIcon.png';
 import styles from './ModalPopup.module.css'
 
+/** Tab configuration for filter modal sidebar */
 const TABS_CONFIG = [
   {
     id: 'tags',
@@ -22,6 +23,7 @@ const TABS_CONFIG = [
   },
 ];
 
+/** Field key to Russian label mapping for filter sections */
 const FIELD_LABELS = {
   'language': 'Язык реализации',
   'degree_title': 'Уровень образования',
@@ -29,6 +31,10 @@ const FIELD_LABELS = {
   'educational_form': 'Форма обучения',
 };
 
+/**
+ * Modal popup with tabbed filter interface.
+ * Displays filter categories in sidebar with checkbox options.
+ */
 export default function ModalPopup({ onFilter, filterState, columns, onResetFilters }) {
   const [isOpen, setIsOpen] = useState(false)
   const [activeTab, setActiveTab] = useState(TABS_CONFIG[0].id)
