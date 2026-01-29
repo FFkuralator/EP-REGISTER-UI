@@ -57,10 +57,10 @@
 .modal {
   background: white;
   border-radius: 12px;
-  width: 1194px;
-  height: 766px;
+  width: 80%;
+  height: 80vh;
   max-width: 1194px;
-  max-height: 766px;
+  max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   animation: slideIn 0.3s ease;
@@ -69,18 +69,18 @@
 }
 
 .modalBody {
-  height: calc(766px - 56px);
+  height: calc(80vh - 56px);
   min-height: 0;
   overflow: hidden;
 }
 
 .contentArea {
-  height: calc(766px - 56px);
+  height: calc(80vh - 56px);
   overflow-y: auto;
 }
 
 .sidebar {
-  height: calc(766px - 56px);
+  height: calc(80vh - 56px);
   overflow-y: auto;
 }
 
@@ -416,6 +416,26 @@
 
   .filtersContent .filterSection {
     text-align: left;
+  }
+}
+
+@media (min-width: 770px) and (max-width: 1196px) {
+  .modal {
+    width: 80%;
+    height: 80vh;
+    max-width: 1194px;
+    max-height: 90vh;
+  }
+
+  .modalBody {
+    height: calc(80vh - 56px);
+    overflow: hidden;
+  }
+
+  .contentArea,
+  .sidebar {
+    height: calc(80vh - 56px);
+    overflow-y: auto;
   }
 }
 
