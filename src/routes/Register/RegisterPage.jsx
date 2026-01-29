@@ -10,8 +10,6 @@ import PROGRAM_COLUMNS_CONFIG from '../../config/PROGRAM_COLUMNS_CONFIG';
 import { API_BASE_URL } from '../../api/api';
 import { getTags } from '../../api/tag';
 import styles from './RegisterPage.module.css'
-import SidebarFilter from '../../components/UI/Table/SidebarFilter';
-import ColumnSettings from '../../components/UI/Table/ColumnSettings';
 import ModalPopup from '../../components/UI/Table/ModalPopup';
 import searchIcon from '../../../public/search.png';
 
@@ -201,9 +199,18 @@ export default function RegisterPage() {
   const [columnOrder, setColumnOrder] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState([]);
 
-  useEffect(() => {
+  const refreshTags = React.useCallback(() => {
     getTags().then(res => setAllTags(res.result || [])).catch(() => {});
   }, []);
+
+  const refreshAllData = React.useCallback(() => {
+    fetchData();
+    refreshTags();
+  }, [fetchData, refreshTags]);
+
+  useEffect(() => {
+    refreshTags();
+  }, [refreshTags]);
 
   const uniqueTagNames = React.useMemo(() => {
     const names = new Set();
@@ -426,6 +433,10 @@ export default function RegisterPage() {
           filterState={filter}
           columns={columnsWithFilters}
           onResetFilters={handleResetFilters}
+          allTags={allTags}
+          tagFilter={tagFilter}
+          onTagFilterChange={setTagFilter}
+          onTagsRefresh={refreshTags}
         />
         <Input
           value={search}
@@ -454,25 +465,8 @@ export default function RegisterPage() {
         </button>
       </div>
 
-      <div className={styles.mainContent}>
-        <div className={styles.sidebarContainer}>
-          <ColumnSettings
-            columns={orderedColumns}
-            visibleColumns={visibleColumns}
-            onColumnsChange={setVisibleColumns}
-            onOrderChange={handleColumnOrderChange}
-          />
-          <SidebarFilter
-            onFilter={handleFilter}
-            filterState={filter}
-            columns={columnsWithFilters}
-            tagFilter={tagFilter}
-            onTagFilterChange={setTagFilter}
-          />
-        </div>
-
-        <div className={styles.contentArea}>
-          <Table
+      <div className={styles.contentArea}>
+        <Table
             columns={displayColumns}
             data={tableData}
             onToggleHierarchy={toggleFamily}
@@ -501,7 +495,6 @@ export default function RegisterPage() {
             handlePageSizeChange={handlePageSizeChange}
             onTagsChange={refreshData}
           />
-        </div>
       </div>
     </div>
   );

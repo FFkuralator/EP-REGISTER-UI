@@ -15,7 +15,11 @@ export default function TagColumnCell({ tagName, row, onRefresh }) {
   const tagData = tagEntry ? tagEntry[1] : null;
   const hasTag = !!tagData;
   const isSimple = tagData?.type === 'SIMPLE';
-  const displayValue = hasTag ? (isSimple ? tagName : (tagData.value || '—')) : '—';
+  const displayValue = hasTag 
+    ? (isSimple 
+        ? tagName 
+        : (tagData.text_value || tagData.number_value || tagData.boolean_value?.toString() || '—')) 
+    : '—';
 
   useEffect(() => {
     if (isEditing && cellRef.current) {
@@ -177,7 +181,11 @@ export default function TagColumnCell({ tagName, row, onRefresh }) {
         className={`${styles.cell} ${hasTag ? styles.hasTag : styles.noTag}`}
         onClick={() => {
           setIsEditing(true);
-          setValue(hasTag && !isSimple ? (tagData.value || '') : '');
+          if (hasTag && !isSimple) {
+            setValue(tagData.text_value || tagData.number_value || tagData.boolean_value?.toString() || '');
+          } else {
+            setValue('');
+          }
         }}
         title={hasTag ? `Редактировать: ${displayValue}` : 'Добавить тег'}
       >
