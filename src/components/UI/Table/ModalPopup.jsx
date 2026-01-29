@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { X, Search } from 'lucide-react'
+import { X, Search, Plus } from 'lucide-react'
 import filterIcon from '../../../../public/filterIcon.png';
+import { addTag } from '../../../api/tag';
 import styles from './ModalPopup.module.css'
 
 const TABS_CONFIG = [
@@ -29,10 +30,14 @@ const FIELD_LABELS = {
   'educational_form': 'Форма обучения',
 };
 
-export default function ModalPopup({ onFilter, filterState, columns, onResetFilters }) {
+export default function ModalPopup({ onFilter, filterState, columns, onResetFilters, allTags = [], tagFilter, onTagFilterChange, onTagsRefresh }) {
   const [isOpen, setIsOpen] = useState(false)
   const [activeTab, setActiveTab] = useState(TABS_CONFIG[0].id)
   const [searchQuery, setSearchQuery] = useState('')
+  const [tagSearchQuery, setTagSearchQuery] = useState('')
+  const [expandedTagGroups, setExpandedTagGroups] = useState({})
+  const [isCreatingTag, setIsCreatingTag] = useState(false)
+  const [newTagName, setNewTagName] = useState('')
   const filterableColumns = columns.filter((column) => (column.filterOptions || []).length > 0)
 
   const handleClose = () => {
@@ -47,6 +52,74 @@ export default function ModalPopup({ onFilter, filterState, columns, onResetFilt
     if (onResetFilters) {
       onResetFilters()
     }
+    if (onTagFilterChange) {
+      onTagFilterChange({ tags: {}, mode: 'and' })
+    }
+  }
+
+  const handleTagClick = (tagId, action) => {
+    if (!onTagFilterChange) return
+    const newTags = { ...tagFilter.tags }
+
+    if (newTags[tagId] === action) {
+      delete newTags[tagId]
+    } else {
+      newTags[tagId] = action
+    }
+
+    onTagFilterChange({ ...tagFilter, tags: newTags })
+  }
+
+  const handleTagModeChange = (mode) => {
+    if (!onTagFilterChange) return
+    onTagFilterChange({ ...tagFilter, mode })
+  }
+
+  const getTagMode = (tagId) => {
+    return tagFilter?.tags?.[tagId] || null
+  }
+
+  const filteredTags = allTags.filter(tag => 
+    !tagSearchQuery || tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase())
+  )
+
+  // Группируем теги по имени
+  const groupedTags = React.useMemo(() => {
+    const groups = {};
+    filteredTags.forEach(tag => {
+      if (!groups[tag.name]) {
+        groups[tag.name] = [];
+      }
+      groups[tag.name].push(tag);
+    });
+    return groups;
+  }, [filteredTags]);
+
+  const handleCreateTag = async () => {
+    if (!newTagName.trim()) return;
+    setIsCreatingTag(true);
+    try {
+      const response = await addTag({
+        name: newTagName.trim(),
+        type: 'SIMPLE'
+      });
+      console.log('Tag created:', response);
+      setNewTagName('');
+      // Обновляем список тегов и данные программ
+      await onTagsRefresh?.();
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      alert('Ошибка при создании тега: ' + (error?.message || error));
+    } finally {
+      setIsCreatingTag(false);
+    }
+  }
+
+  const toggleTagGroup = (tagName) => {
+    setExpandedTagGroups(prev => ({
+      ...prev,
+      [tagName]: !prev[tagName]
+    }));
   }
 
   useEffect(() => {
@@ -74,7 +147,9 @@ export default function ModalPopup({ onFilter, filterState, columns, onResetFilt
   const activeTabColumns = getColumnsForTab(activeTab);
 
   const getActiveFiltersCount = () => {
-    return Object.values(filterState).reduce((count, values) => count + (values?.length || 0), 0);
+    const filterCount = Object.values(filterState).reduce((count, values) => count + (values?.length || 0), 0);
+    const tagCount = tagFilter?.tags ? Object.keys(tagFilter.tags).length : 0;
+    return filterCount + tagCount;
   };
 
   const activeFiltersCount = getActiveFiltersCount();
@@ -157,8 +232,116 @@ export default function ModalPopup({ onFilter, filterState, columns, onResetFilt
                 </div>
 
                 {activeTabConfig?.isEmpty ? (
-                  <div className={styles.emptyState}>
-                    <p>Здесь будут теги</p>
+                  <div className={styles.tagsContent}>
+                    <h3 className={styles.sectionTitle}>Теги</h3>
+
+                    <div className={styles.createTagWrapper}>
+                      <input
+                        type="text"
+                        className={styles.createTagInput}
+                        placeholder="Название нового тега..."
+                        value={newTagName}
+                        onChange={(e) => setNewTagName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleCreateTag();
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className={styles.createTagButton}
+                        onClick={handleCreateTag}
+                        disabled={isCreatingTag || !newTagName.trim()}
+                      >
+                        <Plus size={16} />
+                        Создать
+                      </button>
+                    </div>
+                    
+                    <div className={styles.tagSearchWrapper}>
+                      <Search size={16} className={styles.searchIcon} />
+                      <input
+                        type="text"
+                        className={styles.searchInput}
+                        placeholder="Поиск тегов"
+                        value={tagSearchQuery}
+                        onChange={(e) => setTagSearchQuery(e.target.value)}
+                      />
+                    </div>
+
+                    <div className={styles.tagModeToggle}>
+                      <button
+                        type="button"
+                        className={`${styles.modeButton} ${tagFilter?.mode === 'and' ? styles.modeButtonActive : ''}`}
+                        onClick={() => handleTagModeChange('and')}
+                      >
+                        И
+                      </button>
+                      <button
+                        type="button"
+                        className={`${styles.modeButton} ${tagFilter?.mode === 'or' ? styles.modeButtonActive : ''}`}
+                        onClick={() => handleTagModeChange('or')}
+                      >
+                        Или
+                      </button>
+                    </div>
+
+                    <div className={styles.tagGroups}>
+                      {Object.entries(groupedTags).map(([tagName, tags]) => (
+                        <div key={tagName} className={styles.tagGroup}>
+                          <button
+                            type="button"
+                            className={styles.tagGroupHeader}
+                            onClick={() => toggleTagGroup(tagName)}
+                          >
+                            <span>{tagName}</span>
+                            <span className={`${styles.expandIcon} ${expandedTagGroups[tagName] ? styles.expanded : ''}`}>
+                              ▼
+                            </span>
+                          </button>
+                          {expandedTagGroups[tagName] && (
+                            <div className={styles.tagsList}>
+                              {tags.map((tag) => {
+                                const mode = getTagMode(tag.id)
+                                const displayValue = tag.type === 'SIMPLE' 
+                                  ? '(основной)' 
+                                  : tag.text_value || tag.number_value || tag.boolean_value?.toString() || '—';
+                                return (
+                                  <div 
+                                    key={tag.id} 
+                                    className={`${styles.tagItem} ${mode === 'include' ? styles.tagInclude : ''} ${mode === 'exclude' ? styles.tagExclude : ''}`}
+                                  >
+                                    <span className={styles.tagName}>
+                                      {displayValue}
+                                    </span>
+                                    <div className={styles.tagActions}>
+                                      <button
+                                        type="button"
+                                        className={`${styles.tagActionButton} ${styles.includeButton} ${mode === 'include' ? styles.active : ''}`}
+                                        onClick={() => handleTagClick(tag.id, 'include')}
+                                        title="Включить"
+                                      >
+                                        ✓
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className={`${styles.tagActionButton} ${styles.excludeButton} ${mode === 'exclude' ? styles.active : ''}`}
+                                        onClick={() => handleTagClick(tag.id, 'exclude')}
+                                        title="Исключить"
+                                      >
+                                        ✕
+                                      </button>
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {Object.keys(groupedTags).length === 0 && (
+                        <p className={styles.noTags}>Теги не найдены</p>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <div className={styles.filtersContent}>

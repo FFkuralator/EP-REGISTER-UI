@@ -291,6 +291,244 @@
   font-size: 1rem;
 }
 
+.tagsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tagSearchWrapper {
+  position: relative;
+}
+
+.tagModeToggle {
+  display: flex;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.modeButton {
+  flex: 1;
+  padding: 10px 20px;
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s ease;
+}
+
+.modeButton:first-child {
+  border-radius: 7px 0 0 7px;
+}
+
+.modeButton:last-child {
+  border-radius: 0 7px 7px 0;
+}
+
+.modeButtonActive {
+  background: #FF5400;
+  color: #fff;
+}
+
+.modeButton:hover:not(.modeButtonActive) {
+  background: #e5e7eb;
+}
+
+.tagGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tagGroup {
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.tagGroupHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111;
+  padding: 12px;
+  background: #f9fafb;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tagGroupHeader:hover {
+  background: #f3f4f6;
+}
+
+.expandIcon {
+  display: inline-block;
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  color: #6b7280;
+}
+
+.expandIcon.expanded {
+  transform: rotate(180deg);
+}
+
+.tagsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+}
+
+.tagItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.tagItem.tagInclude {
+  background: #ecfdf5;
+  border-color: #10b981;
+}
+
+.tagItem.tagExclude {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.tagName {
+  font-size: 0.95rem;
+  color: #374151;
+  flex: 1;
+}
+
+.tagActions {
+  display: flex;
+  gap: 6px;
+}
+
+.tagActionButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.includeButton {
+  color: #9ca3af;
+}
+
+.includeButton:hover,
+.includeButton.active {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+
+.excludeButton {
+  color: #9ca3af;
+}
+
+.excludeButton:hover,
+.excludeButton.active {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.noTags {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  padding: 20px 0;
+}
+
+.createTagWrapper {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.createTagInput {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease;
+}
+
+.createTagInput:focus {
+  outline: none;
+  border-color: #FF5400;
+}
+
+.createTagButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: #FF5400;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.createTagButton:hover:not(:disabled) {
+  background: #e64d00;
+}
+
+.createTagButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tagGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tagGroup {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.tagGroupHeader {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
 .filtersContent {
   display: flex;
   flex-direction: column;
