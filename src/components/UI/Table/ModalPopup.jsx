@@ -83,7 +83,6 @@ export default function ModalPopup({ onFilter, filterState, columns, onResetFilt
     !tagSearchQuery || tag.name.toLowerCase().includes(tagSearchQuery.toLowerCase())
   )
 
-  // Группируем теги по имени
   const groupedTags = React.useMemo(() => {
     const groups = {};
     filteredTags.forEach(tag => {
@@ -105,7 +104,6 @@ export default function ModalPopup({ onFilter, filterState, columns, onResetFilt
       });
       console.log('Tag created:', response);
       setNewTagName('');
-      // Обновляем список тегов и данные программ
       await onTagsRefresh?.();
     } catch (error) {
       console.error('Error creating tag:', error);
@@ -302,9 +300,24 @@ export default function ModalPopup({ onFilter, filterState, columns, onResetFilt
                             <div className={styles.tagsList}>
                               {tags.map((tag) => {
                                 const mode = getTagMode(tag.id)
-                                const displayValue = tag.type === 'SIMPLE' 
-                                  ? '(основной)' 
-                                  : tag.text_value || tag.number_value || tag.boolean_value?.toString() || '—';
+                                const getDisplayValue = (t) => {
+                                  if (t.type === 'SIMPLE') return t.name || '(основной)';
+                                  const candidates = [
+                                    t.text_value,
+                                    t.number_value != null ? String(t.number_value) : null,
+                                    t.boolean_value != null ? String(t.boolean_value) : null,
+                                    t.value,
+                                    t.val,
+                                    t.label,
+                                    t.name,
+                                  ];
+                                  const found = candidates.find(v => v !== undefined && v !== null && v !== '');
+                                  if (found === undefined) return '—';
+                                  return found;
+                                };
+
+                                const displayValue = getDisplayValue(tag);
+
                                 return (
                                   <div 
                                     key={tag.id} 
