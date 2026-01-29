@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useAuth } from '../../../../hooks/useAuth';
 import LoginModal from '../../../UI/LoginModal/LoginModal';
@@ -7,6 +7,7 @@ import styles from './Header.module.css';
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
     const { user, isAuthenticated, logout } = useAuth();
 
@@ -25,6 +26,23 @@ export default function Header() {
         } }
     ];
 
+    // Закрываем мобильное меню при смене роута
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location.pathname]);
+
+    // Блокируем скролл когда мобильное меню открыто
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isMobileMenuOpen]);
+
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
@@ -33,8 +51,17 @@ export default function Header() {
         setIsDropdownOpen(false);
     };
 
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+    };
+
+    const closeMobileMenu = () => {
+        setIsMobileMenuOpen(false);
+    };
+
     const handleLoginClick = () => {
         setIsLoginModalOpen(true);
+        setIsMobileMenuOpen(false);
     };
 
     const handleCloseLoginModal = () => {
@@ -54,7 +81,7 @@ export default function Header() {
             </Link>
           </div>
                     
-                    
+          {/* Desktop Navigation */}
           <div className={styles.center}>
             <nav className={styles.nav}>
                 {navItems.map((item) => (
@@ -125,6 +152,77 @@ export default function Header() {
                     onClick={closeDropdown}
                 />
             )}
+          </div>
+
+          {/* Burger Button */}
+          <button 
+            className={`${styles.burgerButton} ${isMobileMenuOpen ? styles.active : ''}`}
+            onClick={toggleMobileMenu}
+            aria-label="Открыть меню"
+          >
+            <span className={styles.burgerLine}></span>
+            <span className={styles.burgerLine}></span>
+            <span className={styles.burgerLine}></span>
+          </button>
+
+          {/* Mobile Menu Overlay */}
+          <div 
+            className={`${styles.mobileOverlay} ${isMobileMenuOpen ? styles.open : ''}`}
+            onClick={closeMobileMenu}
+          />
+
+          {/* Mobile Menu */}
+          <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}>
+            <nav className={styles.mobileNav}>
+                {navItems.map((item) => (
+                    <Link
+                        key={item.path}
+                        to={item.path}
+                        className={`${styles.mobileNavLink} ${
+                            location.pathname === item.path ? styles.active : ''
+                        }`}
+                        onClick={closeMobileMenu}
+                    >
+                        {item.label}
+                    </Link>
+                ))}
+            </nav>
+
+            <div className={styles.mobileActions}>
+                {isAuthenticated ? (
+                    <>
+                        <div className={styles.mobileUserInfo}>
+                            <div className={styles.avatar}>
+                                {user.email ? user.email[0].toUpperCase() : 'U'}
+                            </div>
+                            <span className={styles.mobileUserName}>
+                                {user.email || 'Пользователь'}
+                            </span>
+                        </div>
+                        <div className={styles.mobileDropdownItems}>
+                            {dropdownItems.map((item, index) => (
+                                <button
+                                    key={index}
+                                    className={styles.mobileDropdownItem}
+                                    onClick={() => {
+                                        item.action();
+                                        closeMobileMenu();
+                                    }}
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <button 
+                        className={styles.mobileLoginButton}
+                        onClick={handleLoginClick}
+                    >
+                        Вход
+                    </button>
+                )}
+            </div>
           </div>
 
           <LoginModal 
