@@ -140,6 +140,10 @@ export default function RegisterPage() {
     });
   };
 
+  const handleResetFilters = () => {
+    setFilter({});
+  };
+
   const [paginationData, setPaginationData] = useState({
     pageSize: 20,
     startItem: dataCount > 1 ? 1 : 0,
@@ -298,6 +302,7 @@ export default function RegisterPage() {
           onFilter={handleFilter}
           filterState={filter}
           columns={columnsWithFilters}
+          onResetFilters={handleResetFilters}
         />
         <Input
           value={search}
