@@ -1,0 +1,25 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0.5rem 1rem;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.secondary {
+  background-color: #fff;
+  color: #111;
+}
+
+.secondary:hover {
+  background-color: #fff;
+}

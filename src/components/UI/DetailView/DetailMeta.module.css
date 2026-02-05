@@ -7,22 +7,24 @@
 
 .metaWrapper {
   display: flex;
-  column-gap: 1.5em;
-  row-gap: 0.5em;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .metaColumn {
   display: flex;
   flex-direction: column;
-  gap: 0.5em;
+  gap: 8px;
 }
 
 .metaItem {
-
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .metaKey {
-  font-weight: 600;
-  color: grey;
-  margin-right: 4em;
+  font-weight: 400;
+  color: #666;
 }

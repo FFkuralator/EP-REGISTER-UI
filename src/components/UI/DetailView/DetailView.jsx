@@ -12,6 +12,7 @@ export default function DetailView(
     details,
     sidebar,
     getSidebarLabel,
+    tags,
     onRefresh
   }
 ) {
@@ -21,33 +22,35 @@ export default function DetailView(
 
       <div className={styles.main_column}>
         <div className={styles.column_wrapper}>
-          {meta ?
-            <DetailMeta data={meta} getLabel={getMetaLabel} onRefresh={onRefresh} />
-            : {}
-          }
-          {details ?
+          {meta && (
+            <DetailBlock title="Характеристики Образовательной программы">
+              <DetailMeta data={meta} getLabel={getMetaLabel} onRefresh={onRefresh} />
+            </DetailBlock>
+          )}
+          {tags && (
+            <DetailBlock title="Теги">
+              <DetailMeta data={{tags: tags}} getLabel={getMetaLabel} onRefresh={onRefresh} />
+            </DetailBlock>
+          )}
+          {details &&
             details.map((block, index) => (
-              <DetailBlock 
+              block && <DetailBlock 
                 key={index}
                 title={block.title}
               > { block.content }
               </DetailBlock>
             ))
-            : null
           }
         </div>
 
         <div className={styles.sidebar_column}>
-          <div className={styles.column_wrapper}>
-            </div>
-              {sidebar ?
-                sidebar.map((detail, index) => (
-                  <DetailMeta key={index} data={detail} getLabel={getSidebarLabel} wide={false} onRefresh={onRefresh} />
-                ))
-                : null
-              }
-            </div>
-          </div>
+          {sidebar &&
+            sidebar.map((detail, index) => (
+              <DetailMeta key={index} data={detail} getLabel={getSidebarLabel} wide={false} onRefresh={onRefresh} />
+            ))
+          }
+        </div>
       </div>
+    </div>
   )
 }
