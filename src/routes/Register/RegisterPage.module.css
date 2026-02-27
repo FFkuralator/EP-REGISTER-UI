@@ -67,16 +67,6 @@
   margin-left: auto;
 }
 
-.exportButton:hover {
-  background: #FF5400;
-  border-color: #9ca3af;
-  color: #fff;
-}
-
-.exportButton:active {
-  background: #e5e7eb;
-}
-
 .exportButton svg {
   display: block;
   width: 20px;
