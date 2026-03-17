@@ -14,6 +14,53 @@ import ModalPopup from '../../components/UI/Table/ModalPopup';
 import searchIcon from '../../../public/search.png';
 
 export default function RegisterPage() {
+  const DISPLAY_TO_ENUM = {
+    educational_form: {
+      'Очно': 'OFFLINE',
+      'Заочно': 'ONLINE',
+      'Очно-заочная': 'BOTH',
+    },
+    language: {
+      'Русский': 'RUSSIAN',
+      'Английский': 'ENGLISH',
+      'Частично на английском': 'PARTIALLY_ENGLISH',
+    },
+    network_form: {
+      'Нет': 'NO',
+      'ДВФУ - базовая': 'FEFU_BASIC',
+      'ДВФУ - участник': 'FEFU_PARTICIPANT',
+      'Неизвестен': 'UNKNOWN',
+    },
+    educational_standard_type: {
+      'ФГОС ВО (3++)': 'ФГОС ВО (3++)',
+      'ОС ВО ДВФУ': 'ОС ВО ДВФУ',
+    },
+  };
+
+  const ALLOWED_SORT_FIELDS = new Set([
+    'id',
+    'title',
+    'title_short',
+    'degree_title',
+    'school_title',
+    'school_code',
+    'partner_titles',
+    'field_of_study_title',
+    'field_of_study_code',
+    'start_year',
+    'end_year',
+    'network_form',
+    'educational_form',
+    'educational_standard_type',
+    'language',
+    'language_hours',
+    'standard_duration_months',
+    'poa_accreditation_company',
+    'poa_accreditation_expiry',
+    'state_accreditation_expiry',
+    'description',
+  ]);
+
   const dateKeys = [
     "poa_accreditation_expiry",
     "state_accreditation_expiry"
@@ -55,10 +102,16 @@ export default function RegisterPage() {
 
   const fetchData = React.useCallback(async () => {
     try {
-      const result = await fetch(`${API_BASE_URL}/educational_program/active/get?lang=ru`, {
-          headers: {
-            "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
+      const token = localStorage.getItem('auth_token');
+      const authHeaders = token
+        ? {
+            Authorization: `Bearer ${token}`,
+            auth: token,
           }
+        : {};
+
+      const result = await fetch(`${API_BASE_URL}/educational_program/active/get?lang=ru`, {
+          headers: authHeaders
       });
       const rawData = await result.json();
 
@@ -68,9 +121,7 @@ export default function RegisterPage() {
       for (const prog of rawData.result) {
         try {
           const resp = await fetch(`${API_BASE_URL}/educational_program/hierarchy?educational_program_id=${prog.id}&lang=ru`, {
-            headers: {
-              "auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJhZG1pbiJdLCJpc3MiOiJkZXYiLCJpYXQiOjE3NjMwMDY0MDB9.7Ky0pApLsyaV5ToYsrBydTB-4RtuS3RjNdI_anHZD_Y"
-            }
+            headers: authHeaders
           });
           if (!resp.ok) continue;
           const hRes = await resp.json();
@@ -195,6 +246,7 @@ export default function RegisterPage() {
 
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 800);
+  const [isExporting, setIsExporting] = useState(false);
   const [allTags, setAllTags] = useState([]);
   const [columnOrder, setColumnOrder] = useState([]);
   const [visibleColumns, setVisibleColumns] = useState([]);
@@ -425,6 +477,158 @@ export default function RegisterPage() {
     fetchData();
   };
 
+  const buildExportPayload = React.useCallback(() => {
+    const include_tag_ids = Object.entries(tagFilter.tags)
+      .filter(([, mode]) => mode === 'include')
+      .map(([id]) => Number(id))
+      .filter((id) => Number.isFinite(id));
+
+    const exclude_tag_ids = Object.entries(tagFilter.tags)
+      .filter(([, mode]) => mode === 'exclude')
+      .map(([id]) => Number(id))
+      .filter((id) => Number.isFinite(id));
+
+    const filter_by = {};
+    const pick = (key) => (filter[key] || []).filter(Boolean);
+
+    const mapEnum = (field, values) => {
+      const mapper = DISPLAY_TO_ENUM[field] || {};
+      return values.map((value) => mapper[value] || value).filter(Boolean);
+    };
+
+    const numeric = (values) => values
+      .map((v) => Number(v))
+      .filter((v) => Number.isFinite(v));
+
+    const directTextMap = {
+      title: 'title_in',
+      title_short: 'title_short_in',
+      degree_title: 'degree_title_in',
+      school_title: 'school_title_in',
+      school_code: 'school_code_in',
+      field_of_study_title: 'field_of_study_title_in',
+      field_of_study_code: 'field_of_study_code_in',
+      poa_accreditation_company: 'poa_accreditation_company_in',
+      partner_titles: 'partner_title_in',
+    };
+
+    Object.entries(directTextMap).forEach(([source, target]) => {
+      const values = pick(source);
+      if (values.length > 0) {
+        filter_by[target] = values;
+      }
+    });
+
+    const startYears = numeric(pick('start_year'));
+    if (startYears.length > 0) {
+      filter_by.start_year_in = startYears;
+    }
+
+    const endYears = numeric(pick('end_year'));
+    if (endYears.length > 0) {
+      filter_by.end_year_in = endYears;
+    }
+
+    const langHours = numeric(pick('language_hours'));
+    if (langHours.length > 0) {
+      filter_by.language_hours_in = langHours;
+    }
+
+    const duration = numeric(pick('standard_duration_months'));
+    if (duration.length > 0) {
+      filter_by.standard_duration_months_in = duration;
+    }
+
+    const educationalFormValues = mapEnum('educational_form', pick('educational_form'));
+    if (educationalFormValues.length > 0) {
+      filter_by.educational_form_in = educationalFormValues;
+    }
+
+    const languageValues = mapEnum('language', pick('language'));
+    if (languageValues.length > 0) {
+      filter_by.language_in = languageValues;
+    }
+
+    const networkFormValues = mapEnum('network_form', pick('network_form'));
+    if (networkFormValues.length > 0) {
+      filter_by.network_form_in = networkFormValues;
+    }
+
+    const standardValues = mapEnum(
+      'educational_standard_type',
+      pick('educational_standard_type')
+    );
+    if (standardValues.length > 0) {
+      filter_by.educational_standard_type_in = standardValues;
+    }
+
+    if (debouncedSearch.trim()) {
+      filter_by.search = debouncedSearch.trim();
+    }
+
+    const sort_by = ALLOWED_SORT_FIELDS.has(sort.by) ? sort.by : 'title';
+    const sort_order = sort.order === 'desc' ? 'desc' : 'asc';
+
+    return {
+      base_filter: {
+        include_tag_ids,
+        exclude_tag_ids,
+        include_logic: tagFilter.mode === 'or' ? 'OR' : 'AND',
+        exclude_logic: 'OR',
+      },
+      filter_by,
+      sort_by,
+      sort_order,
+    };
+  }, [filter, tagFilter, sort, debouncedSearch]);
+
+  const handleExport = React.useCallback(async () => {
+    if (isExporting) {
+      return;
+    }
+
+    try {
+      setIsExporting(true);
+      const token = localStorage.getItem('auth_token');
+      const payload = buildExportPayload();
+
+      const response = await fetch(
+        `${API_BASE_URL}/educational_program/active/export/excel?lang=ru`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token
+              ? {
+                  Authorization: `Bearer ${token}`,
+                  auth: token,
+                }
+              : {}),
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Не удалось выполнить экспорт');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'educational_program_active.xlsx';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Ошибка экспорта:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  }, [buildExportPayload, isExporting]);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -455,13 +659,15 @@ export default function RegisterPage() {
           type="button"
           className={styles.exportButton}
           aria-label="Экспорт"
+          onClick={handleExport}
+          disabled={isExporting}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M12 3v10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M8 9l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M21 21H3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span>Экспорт</span>
+          <span>{isExporting ? 'Экспорт...' : 'Экспорт'}</span>
         </button>
       </div>
 
