@@ -78,6 +78,39 @@
   display: inline-block;
 }
 
+.columnManagerButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  min-height: 40px;
+  min-width: 130px;
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  margin-right: 0.5rem;
+}
+
+.columnManagerButton:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  color: #1f2937;
+}
+
+.columnManagerButton svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
 .mainContent {
   flex: 1;
   display: flex;

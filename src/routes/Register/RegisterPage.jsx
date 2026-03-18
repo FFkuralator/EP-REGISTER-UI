@@ -12,6 +12,9 @@ import { getTags } from '../../api/tag';
 import styles from './RegisterPage.module.css'
 import ModalPopup from '../../components/UI/Table/ModalPopup';
 import searchIcon from '../../../public/search.png';
+import ColumnManager from '../../components/UI/ColumnManager/ColumnManager';
+import { useColumnPreferences } from '../../hooks/useColumnPreferences';
+import { exportToExcel } from '../../utils/exportToExcel';
 
 export default function RegisterPage() {
   const dateKeys = [
@@ -196,8 +199,9 @@ export default function RegisterPage() {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search, 800);
   const [allTags, setAllTags] = useState([]);
-  const [columnOrder, setColumnOrder] = useState([]);
-  const [visibleColumns, setVisibleColumns] = useState([]);
+  const [showColumnManager, setShowColumnManager] = useState(false);
+
+  const columnPreferences = useColumnPreferences(PROGRAM_COLUMNS_CONFIG, 'registerPageColumns');
 
   const refreshTags = React.useCallback(() => {
     getTags().then(res => setAllTags(res.result || [])).catch(() => {});
@@ -261,26 +265,9 @@ export default function RegisterPage() {
     return [...columnsWithFilters, ...tagColumns];
   }, [columnsWithFilters, tagColumns]);
 
-  useEffect(() => {
-    if (allColumns.length > 0 && columnOrder.length === 0) {
-      setColumnOrder(allColumns.map(c => c.key));
-      setVisibleColumns(columnsWithFilters.map(c => c.key));
-    }
-  }, [allColumns, columnsWithFilters, columnOrder.length]);
-
-  const orderedColumns = React.useMemo(() => {
-    const colMap = Object.fromEntries(allColumns.map(c => [c.key, c]));
-    return columnOrder.filter(k => colMap[k]).map(k => colMap[k]);
-  }, [allColumns, columnOrder]);
-
   const displayColumns = React.useMemo(() => {
-    const visible = orderedColumns.filter(c => visibleColumns.includes(c.key));
-    return [{ key: '__hierarchy', title: '' }, ...visible];
-  }, [orderedColumns, visibleColumns]);
-
-  const handleColumnOrderChange = (newOrder) => {
-    setColumnOrder(newOrder.map(c => c.key));
-  };
+    return [{ key: '__hierarchy', title: '' }, ...columnPreferences.getOrderedVisibleColumns()];
+  }, [columnPreferences]);
 
   const matchesTagFilter = (row) => {
     const includes = Object.entries(tagFilter.tags).filter(([, m]) => m === 'include').map(([id]) => parseInt(id));
@@ -425,6 +412,11 @@ export default function RegisterPage() {
     fetchData();
   };
 
+  const handleExport = () => {
+    const visibleCols = displayColumns.filter(col => col.key !== '__hierarchy');
+    exportToExcel(tableData, visibleCols, 'образовательные_программы');
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -453,8 +445,21 @@ export default function RegisterPage() {
         </Link>
         <button
           type="button"
+          className={styles.columnManagerButton}
+          aria-label="Управление столбцами"
+          onClick={() => setShowColumnManager(true)}
+          title="Управление столбцами"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span>Столбцы</span>
+        </button>
+        <button
+          type="button"
           className={styles.exportButton}
           aria-label="Экспорт"
+          onClick={() => handleExport()}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M12 3v10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -496,6 +501,17 @@ export default function RegisterPage() {
             onTagsChange={refreshData}
           />
       </div>
+
+      {showColumnManager && columnPreferences.isLoaded && (
+        <ColumnManager
+          columns={columnsWithFilters}
+          visibleColumnKeys={columnPreferences.visibleColumnKeys}
+          onUpdateVisibility={columnPreferences.updateVisibleColumns}
+          onUpdateOrder={columnPreferences.updateColumnOrder}
+          onReset={columnPreferences.resetToDefaults}
+          onClose={() => setShowColumnManager(false)}
+        />
+      )}
     </div>
   );
 }
