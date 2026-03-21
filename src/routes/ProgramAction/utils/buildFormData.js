@@ -44,8 +44,8 @@ export const buildFormData = (program, isAdd, allSchools, allDegrees, allFieldOf
     baseData.id = program?.id;
     baseData.is_active = true;
     baseData.parent_id = program?.id ?? null;
-    baseData.start_year = (program?.start_year || 2024) + 1;
-    baseData.end_year = (program?.end_year || 2024) + 1;
+    baseData.start_year = program?.start_year ?? 2024;
+    baseData.end_year = program?.end_year ?? 2024;
   }
 
   return baseData;
